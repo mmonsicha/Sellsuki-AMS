@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Sellsuki — เข้าสู่ระบบ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+/* ════════════════════════════════════════════════
+   SELLSUKI DESIGN SYSTEM — CSS Tokens
+   Source : @uxuissk/design-system
+   Audited: 2025-03-29 by /sellsuki-ux-designer
+════════════════════════════════════════════════ */
+:root {
+  /* ── Brand / Sky palette ── */
+  --sky-50:   #f0f9ff;
+  --sky-100:  #e0f2fe;
+  --sky-200:  #bae6fd;   /* bg-brand-disabled (muted) */
+  --sky-400:  #38bdf8;
+  --sky-500:  #32a9ff;   /* bg-brand-solid   ← PRIMARY ACTION */
+  --sky-600:  #1b8bf5;   /* bg-brand-solid-hover / Link token */
+  --sky-700:  #1478dc;
+
+  /* ── Neutral / Gray palette ── */
+  --gray-50:  #f9fafb;   /* bg-primary_hover */
+  --gray-100: #f3f4f6;   /* bg-secondary */
+  --gray-200: #e5e7eb;   /* stroke-primary / bg-disabled */
+  --gray-300: #d1d5db;   /* stroke-secondary */
+  --gray-400: #9ca3af;   /* text-placeholder / text-disabled */
+  --gray-500: #6b7280;   /* text-secondary */
+  --gray-700: #374151;
+  --gray-800: #1f2937;   /* text-primary */
+
+  /* ── Status palettes ── */
+  --rose-50:     #fff1f2;
+  --rose-100:    #ffe4e6;
+  --rose-500:    #f43f5e;   /* required asterisk */
+  --rose-600:    #e11d48;   /* bg-danger-solid */
+  --rose-700:    #be123c;   /* bg-danger-solid-hover */
+  --emerald-50:  #ecfdf5;
+  --emerald-600: #059669;   /* bg-success-solid */
+  --amber-50:    #fffbeb;
+  --amber-500:   #f59e0b;   /* verify icon bg */
+  --amber-600:   #d97706;   /* bg-warning-solid */
+
+  /* ── Semantic background tokens ── */
+  --bg-page:           #f9fafb;  /* DS: --background light = Gray-50 */
+  --bg-primary:        #ffffff;  /* DS: bg-primary */
+  --bg-primary-hover:  var(--gray-50);
+  --bg-secondary:      var(--gray-100);
+  --bg-disabled:       var(--gray-200);
+  --bg-brand-primary:  var(--sky-50);
+  --bg-brand-solid:    var(--sky-500);
+
+  /* ── Semantic text tokens ── */
+  --text-primary:      var(--gray-800);
+  --text-secondary:    var(--gray-500);
+  --text-placeholder:  var(--gray-400);
+  --text-disabled:     var(--gray-400);
+  --text-brand:        var(--sky-500);
+  --text-link:         var(--sky-600);
+  --text-white:        #ffffff;
+
+  /* ── Semantic stroke / border tokens ── */
+  --stroke-primary:    var(--gray-200);
+  --stroke-secondary:  var(--gray-300);
+  --stroke-brand:      var(--sky-500);
+  --stroke-danger:     var(--rose-600);
+  --stroke-focus:      var(--sky-500);
+
+  /* ── Typography ── */
+  --font-heading: 'Sarabun', 'DB HeaventRounded', sans-serif;
+  --font-body:    'Sarabun', 'DB HeaventRounded', sans-serif;
+  --font-button:  'Inter', sans-serif;   /* DS: buttons use Inter */
+
+  --text-h3:      28px;   /* Card titles — bold 700 */
+  --text-p:       16px;   /* Body text */
+  --text-caption: 14px;   /* Helper text, captions */
+  --text-label:   14px;   /* Form labels */
+  --text-button:  14px;   /* Button text — semibold 600 */
+
+  /* ── Border radius ── */
+  --radius-sm:    6px;
+  --radius-md:    8px;    /* DEFAULT for inputs, buttons */
+  --radius-lg:    12px;
+  --radius-xl:    16px;
+  --radius-full:  9999px;
+
+  /* ── Elevation — DS uses elevation-sm ONLY ── */
+  --elevation-sm: 0px 1px 2px 0px rgba(0,0,0,.05);
+
+  /* ── Spacing tokens ── */
+  --space-4:   4px;
+  --space-8:   8px;
+  --space-12:  12px;
+  --space-16:  16px;
+  --space-20:  20px;
+  --space-24:  24px;
+  --space-32:  32px;
+  --space-40:  40px;
+}
+
+/* ── Reset ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0 }
+html { -webkit-text-size-adjust: 100% }
+
+body {
+  font-family: var(--font-body);
+  font-size: var(--text-p);
+  color: var(--text-primary);
+  background: var(--bg-page);   /* ✅ DS bg-page = Gray-50 #f9fafb */
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ════════════════════════════════════════════════
+   PAGE SHELL
+════════════════════════════════════════════════ */
+.auth-shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-24) var(--space-16);
+  position: relative;
+  overflow: hidden;
+}
+
+.bg-art {
+  position: fixed; inset: 0;
+  display: flex; align-items: flex-end; justify-content: space-between;
+  pointer-events: none; z-index: 0;
+}
+.bg-art img {
+  width: clamp(200px, 28vw, 520px);
+  height: clamp(200px, 28vw, 520px);
+  object-fit: contain; flex-shrink: 0;
+}
+@media (max-width: 640px) { .bg-art { display: none } }
+
+/* ════════════════════════════════════════════════
+   DS Card  — elevation-sm + border + radius-xl
+   ✅ elevation-sm only (DS rule: no heavy shadows)
+════════════════════════════════════════════════ */
+.ds-card {
+  position: relative; z-index: 1;
+  background: var(--bg-primary);
+  border: 1px solid var(--stroke-primary);
+  border-radius: var(--radius-xl);          /* 16px */
+  box-shadow: var(--elevation-sm);          /* ✅ elevation-sm only */
+  width: 100%; max-width: 440px;
+  padding: clamp(24px, 5vw, 40px);
+  animation: fadeSlideUp .22s cubic-bezier(.25,.46,.45,.94) both;
+}
+@keyframes fadeSlideUp {
+  from { opacity: 0; transform: translateY(8px) }
+  to   { opacity: 1; transform: translateY(0)   }
+}
+
+/* Page footer */
+.page-footer {
+  position: relative; z-index: 1;
+  margin-top: var(--space-16);
+  max-width: 440px; width: 100%;
+  font-family: var(--font-body);
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+.page-footer .ds-link { font-size: inherit }
+
+/* ════════════════════════════════════════════════
+   DS Back Button (ghost pattern)
+════════════════════════════════════════════════ */
+.ds-back-btn {
+  display: inline-flex; align-items: center;
+  gap: var(--space-4);
+  background: none; border: none; cursor: pointer;
+  color: var(--text-secondary);
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  padding: 0; margin-bottom: var(--space-16);
+  transition: color .15s;
+}
+.ds-back-btn:hover { color: var(--text-primary) }
+.ds-back-btn svg { width: 18px; height: 18px }
+
+/* ════════════════════════════════════════════════
+   Card Header  (Logo + Title + Subtitle)
+════════════════════════════════════════════════ */
+.card-header {
+  display: flex; flex-direction: column;
+  align-items: center; text-align: center;
+  gap: var(--space-8);
+  margin-bottom: var(--space-32);
+}
+
+/* Logo — Sellsuki_Logo.png embedded */
+.logo-wrap {
+  width: 80px; height: 80px;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: var(--space-4);
+}
+.logo-wrap img {
+  width: 80px; height: 80px;
+  object-fit: contain;
+}
+
+/* DS Typography tokens */
+.ds-h3 {
+  font-family: var(--font-heading);
+  font-size: clamp(20px, 4.5vw, var(--text-h3));  /* ✅ text-h3 = 28px bold */
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.25;
+}
+.ds-body {
+  font-family: var(--font-body);
+  font-size: var(--text-p);     /* ✅ text-p = 16px */
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+.ds-caption {
+  font-family: var(--font-body);
+  font-size: var(--text-caption);  /* ✅ text-caption = 14px */
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+.ds-link {
+  color: var(--text-link);     /* ✅ Link token = Sky-600 #1b8bf5 */
+  text-decoration: none; cursor: pointer;
+  font-size: var(--text-caption);
+  transition: color .15s;
+}
+.ds-link:hover { color: var(--sky-700); text-decoration: underline }
+
+/* Email chip */
+.email-chip { font-size: var(--text-caption); color: var(--text-secondary) }
+
+/* ════════════════════════════════════════════════
+   DS FormField  — FormField + FormLabel pattern
+   ✅ gap between fields: --space-16 (DS form field gap)
+════════════════════════════════════════════════ */
+.ds-form-field {
+  display: flex; flex-direction: column;
+  gap: var(--space-4); width: 100%;
+}
+.ds-label {
+  font-family: var(--font-body);
+  font-size: var(--text-label);   /* ✅ text-label = 14px */
+  font-weight: 400;
+  color: var(--text-primary);
+  display: flex; align-items: center; gap: var(--space-4);
+}
+.ds-label .required { color: var(--rose-500) }
+
+/* DS Input — outlined variant, size=lg (40px) */
+.ds-input-wrap { position: relative; width: 100% }
+.ds-input {
+  display: block; width: 100%;
+  height: 40px;                   /* ✅ size=lg = 40px */
+  padding: 0 var(--space-16);
+  border: 1px solid var(--stroke-primary);
+  border-radius: var(--radius-md);  /* ✅ radius-md = 8px DEFAULT */
+  background: var(--bg-primary);
+  font-family: var(--font-body);
+  font-size: var(--text-p);
+  color: var(--text-primary);
+  outline: none;
+  transition: border-color .15s, box-shadow .15s;
+  -webkit-appearance: none;
+}
+.ds-input::placeholder { color: var(--text-placeholder) }
+.ds-input:focus {
+  border-color: var(--stroke-focus);              /* ✅ stroke-brand = Sky-500 */
+  box-shadow: 0 0 0 3px rgba(50,169,255,.16);     /* ✅ focus ring */
+}
+.ds-input.has-right-icon { padding-right: 44px }
+
+/* DSInput suffix (showPasswordToggle) */
+.ds-input-suffix {
+  position: absolute; right: 12px; top: 50%;
+  transform: translateY(-50%);
+  background: none; border: none; cursor: pointer;
+  color: var(--text-placeholder);
+  display: flex; align-items: center;
+  padding: 4px; border-radius: var(--radius-sm);
+  transition: color .15s;
+}
+.ds-input-suffix:hover { color: var(--text-secondary) }
+
+/* Forgot link — right aligned */
+.ds-forgot-link {
+  display: flex; justify-content: flex-end;
+  margin-top: var(--space-4);
+}
+
+/* DS fields stack */
+.ds-fields { display: flex; flex-direction: column; gap: var(--space-16) }
+
+/* ════════════════════════════════════════════════
+   DS Button — DSButton component
+   Font : Inter (✅ DS rule: button uses Inter)
+   Sizes: sm=32px  md=36px  lg=40px  xl=44px
+════════════════════════════════════════════════ */
+.ds-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  gap: var(--space-8); width: 100%;
+  height: 40px;                 /* ✅ size=lg */
+  padding: 0 var(--space-20);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);  /* ✅ radius-md = 8px */
+  font-family: var(--font-button);  /* ✅ Inter for buttons */
+  font-size: var(--text-button);    /* ✅ 14px semibold */
+  font-weight: 600;
+  letter-spacing: .01em;
+  cursor: pointer; text-decoration: none; white-space: nowrap;
+  transition: background .15s, border-color .15s, color .15s;
+  -webkit-appearance: none;
+}
+
+/* variant=primary: bg-brand-solid Sky-500 */
+.ds-btn-primary {
+  background: var(--bg-brand-solid);   /* ✅ Sky-500 #32a9ff */
+  border-color: var(--bg-brand-solid);
+  color: var(--text-white);
+}
+.ds-btn-primary:hover:not(:disabled):not(.ds-btn-disabled) {
+  background: var(--sky-600);          /* ✅ hover = Sky-600 */
+  border-color: var(--sky-600);
+}
+.ds-btn-primary:disabled, .ds-btn-primary.ds-btn-disabled {
+  background: var(--sky-200);          /* ✅ disabled = Sky-200 muted blue */
+  border-color: var(--sky-200);
+  color: var(--text-white);
+  cursor: not-allowed;
+}
+
+/* variant=outline */
+.ds-btn-outline {
+  background: transparent;
+  border-color: var(--stroke-primary);
+  color: var(--text-primary);
+}
+.ds-btn-outline:hover {
+  background: var(--bg-primary-hover);
+  border-color: var(--stroke-secondary);
+}
+
+/* variant=solid_light (social login buttons) */
+.ds-btn-solid-light {
+  background: var(--bg-primary);
+  border-color: var(--stroke-primary);
+  color: var(--text-primary);
+}
+.ds-btn-solid-light:hover { background: var(--bg-primary-hover) }
+
+/* variant=destructive: Rose-600 */
+.ds-btn-destructive {
+  background: var(--rose-600);         /* ✅ bg-danger-solid */
+  border-color: var(--rose-600);
+  color: var(--text-white);
+}
+.ds-btn-destructive:hover {
+  background: var(--rose-700);         /* ✅ hover = Rose-700 */
+  border-color: var(--rose-700);
+}
+
+/* variant=ghost */
+.ds-btn-ghost {
+  background: transparent; border-color: transparent;
+  color: var(--text-link);
+}
+.ds-btn-ghost:hover { background: var(--bg-brand-primary) }
+
+.ds-btn svg { width: 16px; height: 16px; flex-shrink: 0 }
+
+/* ════════════════════════════════════════════════
+   DS Actions Stack
+════════════════════════════════════════════════ */
+.ds-actions {
+  display: flex; flex-direction: column;
+  gap: var(--space-12); margin-top: var(--space-8); width: 100%;
+}
+.ds-actions-row {
+  display: flex; gap: var(--space-12); width: 100%;
+}
+.ds-actions-row .ds-btn { flex: 1 }
+
+/* ════════════════════════════════════════════════
+   DS Divider — label="หรือ"
+   ✅ Divider component with center label
+════════════════════════════════════════════════ */
+.ds-divider {
+  display: flex; align-items: center;
+  gap: var(--space-12); width: 100%; margin: var(--space-4) 0;
+}
+.ds-divider::before, .ds-divider::after {
+  content: ''; flex: 1; height: 1px;
+  background: var(--stroke-primary);
+}
+.ds-divider span {
+  font-family: var(--font-body);
+  font-size: 13px; color: var(--text-placeholder); white-space: nowrap;
+}
+
+/* ════════════════════════════════════════════════
+   Social button group
+════════════════════════════════════════════════ */
+.social-group { display: flex; flex-direction: column; gap: var(--space-12); width: 100% }
+.social-icon {
+  width: 20px; height: 20px; flex-shrink: 0;
+  display: flex; align-items: center;
+}
+.social-icon svg, .social-icon img { width: 20px; height: 20px }
+
+/* ════════════════════════════════════════════════
+   Email verify icon
+════════════════════════════════════════════════ */
+.verify-icon-wrap {
+  display: flex; align-items: center; justify-content: center;
+  width: 80px; height: 80px; margin: 0 auto var(--space-8);
+}
+.verify-icon-wrap svg { width: 80px; height: 80px }
+
+/* Resend disabled = muted sky-200 */
+#btn-resend.ds-btn-disabled {
+  background: var(--sky-200); border-color: var(--sky-200);
+}
+
+/* ════════════════════════════════════════════════
+   DS Avatar — initials fallback
+   ✅ Avatar component pattern
+════════════════════════════════════════════════ */
+.ds-avatar {
+  display: inline-flex; align-items: center; justify-content: center;
+  border-radius: var(--radius-full);
+  background: linear-gradient(135deg, var(--sky-500), var(--sky-400));
+  color: var(--text-white);
+  font-family: var(--font-heading); font-weight: 700; flex-shrink: 0;
+}
+.ds-avatar-lg { width: 64px; height: 64px; font-size: 24px }
+.ds-avatar-xl { width: 80px; height: 80px; font-size: 30px }
+
+/* ════════════════════════════════════════════════
+   Info tiles (Profile screen)
+════════════════════════════════════════════════ */
+.info-tile {
+  background: var(--bg-secondary);   /* ✅ bg-secondary = Gray-100 */
+  border-radius: var(--radius-md);
+  padding: var(--space-12) var(--space-16);
+  text-align: left;
+}
+.info-tile-label {
+  font-size: 12px; color: var(--text-secondary); margin-bottom: var(--space-4);
+}
+.info-tile-value {
+  font-size: var(--text-p); font-weight: 600; color: var(--text-primary);
+}
+
+/* ════════════════════════════════════════════════
+   DS Modal / ConfirmDialog
+   ✅ ConfirmDialog pattern with radius-xl + elevation
+════════════════════════════════════════════════ */
+.ds-modal-backdrop {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.4); z-index: 500;
+  display: none; align-items: center; justify-content: center;
+  padding: var(--space-16);
+}
+.ds-modal-backdrop.open { display: flex }
+.ds-modal {
+  background: var(--bg-primary);
+  border-radius: var(--radius-xl);
+  padding: var(--space-32) var(--space-24);
+  width: 100%; max-width: 380px;
+  box-shadow: 0 20px 60px rgba(0,0,0,.18);
+  display: flex; flex-direction: column;
+  gap: var(--space-16); align-items: center; text-align: center;
+  animation: modalPop .2s cubic-bezier(.34,1.56,.64,1) both;
+}
+@keyframes modalPop {
+  from { transform: scale(.9); opacity: 0 }
+  to   { transform: scale(1);  opacity: 1 }
+}
+.ds-modal-icon {
+  width: 56px; height: 56px; border-radius: var(--radius-full);
+  background: var(--rose-50);
+  display: flex; align-items: center; justify-content: center;
+}
+.ds-modal-title { font-size: 18px; font-weight: 700; color: var(--text-primary) }
+.ds-modal-desc  { font-size: var(--text-caption); color: var(--text-secondary); line-height: 1.6 }
+
+/* ── Screen router ── */
+.screen { display: none }
+.screen.active { display: block }
+
+/* ── Spacing utilities ── */
+.mt-4  { margin-top: var(--space-4)  }
+.mt-8  { margin-top: var(--space-8)  }
+.mt-12 { margin-top: var(--space-12) }
+.mt-16 { margin-top: var(--space-16) }
+.mt-20 { margin-top: var(--space-20) }
+.mt-24 { margin-top: var(--space-24) }
+.mt-32 { margin-top: var(--space-32) }
+.gap-12 { display: flex; flex-direction: column; gap: var(--space-12) }
+.text-center { text-align: center }
+.w-full { width: 100% }
+</style>
+</head>
+<body>
+
+<!-- BG Illustrations -->
+<div class="bg-art" id="bg-art">
+  <img src="https://www.figma.com/api/mcp/asset/43856c7e-fc77-4625-824e-f2a9731b3c77" alt=""/>
+  <img src="https://www.figma.com/api/mcp/asset/c26e7006-05dc-4d74-8a1b-234505b1bcd3" alt=""/>
+</div>
+
+<!-- Shared logo template — Sellsuki_Logo.png embedded as base64 -->
+<template id="tpl-logo">
+  <img src="data:image/png;base64,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" alt="Sellsuki Logo" width="80" height="80" style="object-fit:contain"/>
+</template>
+
+<!-- ════ AUTH SHELL ════ -->
+<div class="auth-shell" id="auth-shell">
+<div style="display:flex;flex-direction:column;align-items:center;width:100%;max-width:440px">
+
+  <div class="ds-card" id="main-card">
+
+    <!-- ── SCREEN 1: Sign-in email ── -->
+    <div id="screen-signin" class="screen active">
+      <div class="card-header">
+        <div class="logo-wrap"></div>
+        <h1 class="ds-h3">ยินดีต้อนรับสู่ Sellsuki</h1>
+        <p class="ds-body">กรุณาล็อกอินเข้าสู่ระบบ</p>
+      </div>
+      <div class="ds-fields">
+        <div class="ds-form-field">
+          <label class="ds-label">อีเมล</label>
+          <div class="ds-input-wrap">
+            <input class="ds-input" type="email" id="si-email"
+              placeholder="ระบุอีเมล"
+              oninput="validateEmail('si-email','btn-si-next')"
+              onkeydown="if(event.key==='Enter')handleEmailNext()"/>
+          </div>
+        </div>
+      </div>
+      <div class="ds-actions mt-16">
+        <button class="ds-btn ds-btn-primary ds-btn-disabled" id="btn-si-next" onclick="handleEmailNext()">ต่อไป</button>
+        <p class="ds-caption text-center">ยังไม่มีบัญชีเข้าใช้งาน?&nbsp;<a class="ds-link" onclick="routeToSignUp()">สมัครบัญชีผู้ใช้ใหม่ที่นี่</a></p>
+      </div>
+      <div class="ds-divider mt-20"><span>หรือ</span></div>
+      <div class="social-group mt-12">
+        <button class="ds-btn ds-btn-solid-light" onclick="socialSignIn('Google')">
+          <span class="social-icon"><svg viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg></span>
+          เข้าใช้งานด้วยบัญชี Google
+        </button>
+        <button class="ds-btn ds-btn-solid-light" onclick="socialSignIn('Facebook')">
+          <span class="social-icon"><svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" fill="#1877F2"/></svg></span>
+          เข้าใช้งานด้วยบัญชี Facebook
+        </button>
+        <button class="ds-btn ds-btn-solid-light" onclick="socialSignIn('Line')">
+          <span class="social-icon"><svg viewBox="0 0 24 24"><rect width="24" height="24" rx="6" fill="#06C755"/><path d="M20 10.2C20 6.76 16.42 4 12 4S4 6.76 4 10.2c0 3.07 2.72 5.64 6.39 6.13.25.05.59.17.67.38.08.2.05.5.03.7l-.1.63c-.03.2-.16.78.68.42.84-.35 4.53-2.67 6.18-4.57C19.39 12.67 20 11.5 20 10.2z" fill="#fff"/></svg></span>
+          เข้าใช้งานด้วยบัญชี Line
+        </button>
+      </div>
+    </div>
+
+    <!-- ── SCREEN 2: Password ── -->
+    <div id="screen-password" class="screen">
+      <div class="card-header">
+        <div class="logo-wrap"></div>
+        <h1 class="ds-h3">ยินดีต้อนรับสู่ Sellsuki</h1>
+        <p class="email-chip" id="pw-email-chip"></p>
+        <a class="ds-link mt-4" onclick="goScreen('screen-signin')">ไม่ใช่บัญชีนี้ใช่ไหม? ใช้อีเมลอื่นแทน</a>
+      </div>
+      <div class="ds-fields">
+        <div class="ds-form-field">
+          <label class="ds-label">รหัสผ่าน</label>
+          <div class="ds-input-wrap">
+            <input class="ds-input has-right-icon" type="password" id="si-pw"
+              placeholder="ระบุรหัสผ่าน"
+              oninput="validateMinLen('si-pw','btn-login',1)"
+              onkeydown="if(event.key==='Enter')doLogin()"/>
+            <button class="ds-input-suffix" onclick="togglePwVisibility('si-pw',this)" tabindex="-1">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
+          <div class="ds-forgot-link">
+            <a class="ds-link" onclick="goScreen('screen-forgot')">ลืมรหัสผ่าน?</a>
+          </div>
+        </div>
+      </div>
+      <div class="ds-actions mt-8">
+        <button class="ds-btn ds-btn-primary ds-btn-disabled" id="btn-login" onclick="doLogin()">เข้าสู่ระบบ</button>
+      </div>
+    </div>
+
+    <!-- ── SCREEN 3: Sign-up name ── -->
+    <div id="screen-signup-name" class="screen">
+      <div class="card-header">
+        <div class="logo-wrap"></div>
+        <h1 class="ds-h3">สมัครสมาชิก Sellsuki</h1>
+        <p class="email-chip" id="su-email-chip"></p>
+        <a class="ds-link" onclick="goScreen('screen-signin')">สมัครด้วยอีเมลอื่น</a>
+      </div>
+      <div class="ds-fields">
+        <div class="ds-form-field">
+          <label class="ds-label">ชื่อ <span class="required">*</span></label>
+          <input class="ds-input" type="text" id="su-firstname" placeholder="ระบุชื่อ" oninput="checkSignUp()"/>
+        </div>
+        <div class="ds-form-field">
+          <label class="ds-label">นามสกุล <span class="required">*</span></label>
+          <input class="ds-input" type="text" id="su-lastname" placeholder="ระบุนามสกุล" oninput="checkSignUp()"/>
+        </div>
+      </div>
+      <div class="ds-actions mt-16">
+        <button class="ds-btn ds-btn-primary ds-btn-disabled" id="btn-su-next" onclick="doSignUpSubmit()">ต่อไป</button>
+      </div>
+    </div>
+
+    <!-- ── SCREEN 4: Email verify ── -->
+    <div id="screen-verify" class="screen">
+      <div class="verify-icon-wrap">
+        <svg viewBox="0 0 80 80" fill="none">
+          <rect width="80" height="80" rx="40" fill="#FEF3C7"/>
+          <rect x="14" y="24" width="52" height="38" rx="4" fill="#F59E0B"/>
+          <path d="M14 28L40 46L66 28" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="card-header" style="margin-bottom:var(--space-20)">
+        <h1 class="ds-h3">กรุณายืนยันอีเมล</h1>
+        <p class="ds-body">ตรวจสอบอีเมลที่ถูกส่งไปที่</p>
+        <p style="font-size:15px;font-weight:600;color:var(--text-link)" id="verify-email-text"></p>
+        <p class="ds-body">เพื่อยืนยันบัญชีของคุณและเริ่มต้นใช้งาน</p>
+      </div>
+      <div class="ds-actions">
+        <button class="ds-btn ds-btn-primary ds-btn-disabled" id="btn-resend" onclick="resendVerifyEmail()">ส่งอีกครั้ง (60s)</button>
+      </div>
+    </div>
+
+    <!-- ── SCREEN 5: Forgot password ── -->
+    <div id="screen-forgot" class="screen">
+      <button class="ds-back-btn" onclick="goBack()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+      </button>
+      <div class="card-header">
+        <div class="logo-wrap"></div>
+        <h1 class="ds-h3">ระบุอีเมลของคุณ</h1>
+        <p class="ds-body">โปรดป้อนอีเมลของคุณ<br/>เราจะส่งข้อมูลเพื่อรีเซ็ตรหัสผ่านให้</p>
+      </div>
+      <div class="ds-fields">
+        <div class="ds-form-field">
+          <label class="ds-label">อีเมล</label>
+          <div class="ds-input-wrap">
+            <input class="ds-input" type="email" id="fp-email"
+              placeholder="ระบุอีเมล"
+              oninput="validateEmail('fp-email','btn-fp-send')"
+              onkeydown="if(event.key==='Enter')doForgotSend()"/>
+          </div>
+        </div>
+      </div>
+      <div class="ds-actions mt-16">
+        <button class="ds-btn ds-btn-primary ds-btn-disabled" id="btn-fp-send" onclick="doForgotSend()">รีเซ็ตรหัสผ่าน</button>
+      </div>
+    </div>
+
+    <!-- ── SCREEN 6: Forgot sent ── -->
+    <div id="screen-forgot-sent" class="screen text-center">
+      <div class="verify-icon-wrap">
+        <svg viewBox="0 0 80 80" fill="none">
+          <rect width="80" height="80" rx="40" fill="#ECFDF5"/>
+          <path d="M22 40l12 12 24-28" stroke="#059669" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="card-header" style="margin-bottom:var(--space-20)">
+        <h1 class="ds-h3">ส่งอีเมลแล้ว!</h1>
+        <p class="ds-body">ลิงก์รีเซ็ตรหัสผ่านถูกส่งไปยัง</p>
+        <p style="font-size:15px;font-weight:600;color:var(--text-link)" id="fp-sent-email"></p>
+        <p class="ds-body">กรุณาตรวจสอบกล่องอีเมล</p>
+      </div>
+      <div class="ds-actions">
+        <button class="ds-btn ds-btn-primary" onclick="goScreen('screen-signin')">กลับหน้าเข้าสู่ระบบ</button>
+      </div>
+      <p class="ds-caption text-center mt-12">ไม่ได้รับอีเมล?&nbsp;<a class="ds-link" onclick="goScreen('screen-forgot')">ส่งอีกครั้ง</a></p>
+    </div>
+
+    <!-- ── SCREEN 7: Social confirm ── -->
+    <div id="screen-social-cb" class="screen">
+      <div class="card-header">
+        <div class="ds-avatar ds-avatar-xl" id="social-avatar-wrap">ก</div>
+        <h1 class="ds-h3 mt-8" id="social-cb-name"></h1>
+        <p class="ds-body" id="social-cb-sub"></p>
+      </div>
+      <p class="ds-body text-center">ต้องการเข้าสู่ระบบด้วยบัญชี <strong id="social-cb-provider" style="color:var(--text-primary)"></strong> นี้ใช่หรือไม่?</p>
+      <div class="ds-actions mt-20">
+        <button class="ds-btn ds-btn-primary" onclick="doLogin()">ยืนยัน เข้าสู่ระบบ</button>
+        <button class="ds-btn ds-btn-outline" onclick="goScreen('screen-signin')">ยกเลิก</button>
+      </div>
+    </div>
+
+    <!-- ── SCREEN 8: Profile / logged-in ── -->
+    <div id="screen-profile" class="screen">
+      <div class="gap-12 text-center">
+        <div style="display:flex;justify-content:center">
+          <div class="ds-avatar ds-avatar-xl" id="profile-initial">ส</div>
+        </div>
+        <div>
+          <p style="font-size:20px;font-weight:700;color:var(--text-primary)" id="profile-name">สมชาย ใจดี</p>
+          <p class="ds-caption mt-4" id="profile-email">somchai@example.com</p>
+        </div>
+        <div class="gap-12 mt-8">
+          <div class="info-tile">
+            <p class="info-tile-label">สมาชิกตั้งแต่</p>
+            <p class="info-tile-value">มีนาคม 2025</p>
+          </div>
+          <div class="info-tile">
+            <p class="info-tile-label">แผนการใช้งาน</p>
+            <p class="info-tile-value" style="color:var(--sky-600)">Sellsuki Pro</p>
+          </div>
+        </div>
+        <button class="ds-btn ds-btn-destructive mt-8" onclick="openLogoutDialog()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          ออกจากระบบ
+        </button>
+      </div>
+    </div>
+
+  </div><!-- /.ds-card -->
+
+  <div class="page-footer" id="page-footer">
+    การคลิก "เข้าสู่ระบบ" ข้างต้น แสดงว่าคุณได้อ่านและเข้าใจ และยินยอมตาม
+    <a class="ds-link">นโยบายความเป็นส่วนตัว</a> และ <a class="ds-link">คุ้มครองข้อมูลส่วนบุคคล</a>
+  </div>
+
+</div>
+</div>
+
+<!-- DS ConfirmDialog — Logout -->
+<div class="ds-modal-backdrop" id="logout-dialog" onclick="if(event.target===this)closeLogoutDialog()">
+  <div class="ds-modal">
+    <div class="ds-modal-icon">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--rose-600)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+    </div>
+    <p class="ds-modal-title">ต้องการออกจากระบบ?</p>
+    <p class="ds-modal-desc">คุณแน่ใจหรือไม่ว่าต้องการออกจากระบบ<br/>คุณจะต้องเข้าสู่ระบบใหม่อีกครั้ง</p>
+    <div class="ds-actions-row w-full">
+      <button class="ds-btn ds-btn-outline" onclick="closeLogoutDialog()">ยกเลิก</button>
+      <button class="ds-btn ds-btn-destructive" onclick="doLogout()">ออกจากระบบ</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const state = {
+  email: '', prevScreen: 'screen-signin',
+  accounts: {
+    'hello@sellsuki.com': { name: 'สมชาย ใจดี' },
+    'test@sellsuki.com':  { name: 'ทดสอบ ระบบ'  },
+  }
+}
+
+function injectLogos() {
+  const tpl = document.getElementById('tpl-logo').content
+  document.querySelectorAll('.logo-wrap').forEach(el => el.appendChild(tpl.cloneNode(true)))
+}
+
+function goScreen(id) {
+  state.prevScreen = document.querySelector('.screen.active')?.id || 'screen-signin'
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'))
+  document.getElementById(id).classList.add('active')
+  const card = document.getElementById('main-card')
+  card.style.animation = 'none'; void card.offsetHeight; card.style.animation = ''
+  const onSignin = id === 'screen-signin'
+  document.getElementById('page-footer').style.display = onSignin ? '' : 'none'
+  document.getElementById('bg-art').style.display       = onSignin ? '' : 'none'
+}
+function goBack() { goScreen(state.prevScreen || 'screen-signin') }
+
+function isValidEmail(v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()) }
+function validateEmail(inputId, btnId) {
+  setDisabled(btnId, !isValidEmail(document.getElementById(inputId).value))
+}
+function validateMinLen(inputId, btnId, min) {
+  setDisabled(btnId, document.getElementById(inputId).value.length < min)
+}
+function setDisabled(btnId, disabled) {
+  document.getElementById(btnId).classList.toggle('ds-btn-disabled', disabled)
+}
+
+function handleEmailNext() {
+  const email = document.getElementById('si-email').value.trim()
+  if (!isValidEmail(email)) return
+  state.email = email
+  if (state.accounts[email]) {
+    document.getElementById('pw-email-chip').textContent = email
+    document.getElementById('si-pw').value = ''
+    setDisabled('btn-login', true)
+    goScreen('screen-password')
+  } else { routeToSignUp() }
+}
+
+function routeToSignUp() {
+  const emailVal = document.getElementById('si-email').value.trim()
+  if (!isValidEmail(emailVal)) { goScreen('screen-signin'); return }
+  state.email = emailVal
+  document.getElementById('su-email-chip').textContent = emailVal
+  document.getElementById('su-firstname').value = ''
+  document.getElementById('su-lastname').value  = ''
+  setDisabled('btn-su-next', true)
+  goScreen('screen-signup-name')
+}
+
+function checkSignUp() {
+  const fn = document.getElementById('su-firstname').value.trim()
+  const ln = document.getElementById('su-lastname').value.trim()
+  setDisabled('btn-su-next', !(fn && ln))
+}
+
+function doSignUpSubmit() {
+  const fn = document.getElementById('su-firstname').value.trim()
+  const ln = document.getElementById('su-lastname').value.trim()
+  if (!fn || !ln) return
+  state.accounts[state.email] = { name: fn + ' ' + ln }
+  document.getElementById('verify-email-text').textContent = state.email
+  goScreen('screen-verify')
+  startResendCountdown()
+}
+
+let resendTimer
+function startResendCountdown() {
+  clearInterval(resendTimer); let s = 60
+  const btn = document.getElementById('btn-resend')
+  setDisabled('btn-resend', true)
+  btn.textContent = `ส่งอีกครั้ง (${s}s)`
+  resendTimer = setInterval(() => {
+    s--
+    if (s <= 0) { clearInterval(resendTimer); btn.textContent = 'ส่งอีกครั้ง'; setDisabled('btn-resend', false) }
+    else btn.textContent = `ส่งอีกครั้ง (${s}s)`
+  }, 1000)
+}
+function resendVerifyEmail() { startResendCountdown() }
+
+function doLogin() {
+  const acct = state.accounts[state.email] || {}
+  const name = acct.name || 'ผู้ใช้ใหม่'
+  document.getElementById('profile-initial').textContent = name.charAt(0)
+  document.getElementById('profile-name').textContent    = name
+  document.getElementById('profile-email').textContent   = state.email
+  goScreen('screen-profile')
+}
+
+function doForgotSend() {
+  const email = document.getElementById('fp-email').value.trim()
+  if (!isValidEmail(email)) return
+  document.getElementById('fp-sent-email').textContent = email
+  goScreen('screen-forgot-sent')
+}
+
+const SOCIAL_MOCK = {
+  Google:   { name: 'ก้อง กัลยกร', email: 'kong@gmail.com',  initial: 'ก' },
+  Facebook: { name: 'ฝน มาลัย',    email: 'fon@fb.com',      initial: 'ฝ' },
+  Line:     { name: 'ปอ สุดาพร',   email: 'po@line.me',       initial: 'ป' },
+}
+function socialSignIn(provider) {
+  const u = SOCIAL_MOCK[provider]
+  state.email = u.email
+  state.accounts[u.email] = state.accounts[u.email] || { name: u.name }
+  document.getElementById('social-avatar-wrap').textContent = u.initial
+  document.getElementById('social-cb-name').textContent     = u.name
+  document.getElementById('social-cb-sub').textContent      = `ผ่าน ${provider}`
+  document.getElementById('social-cb-provider').textContent = provider
+  goScreen('screen-social-cb')
+}
+
+const EYE_OPEN = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`
+const EYE_OFF  = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>`
+function togglePwVisibility(inputId, btn) {
+  const el = document.getElementById(inputId)
+  const show = el.type === 'password'
+  el.type = show ? 'text' : 'password'
+  btn.innerHTML = show ? EYE_OFF : EYE_OPEN
+}
+
+function openLogoutDialog()  { document.getElementById('logout-dialog').classList.add('open')    }
+function closeLogoutDialog() { document.getElementById('logout-dialog').classList.remove('open') }
+function doLogout() {
+  closeLogoutDialog(); state.email = ''
+  document.getElementById('si-email').value = ''
+  setDisabled('btn-si-next', true)
+  goScreen('screen-signin')
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  injectLogos()
+})
+</script>
+</body>
+</html>

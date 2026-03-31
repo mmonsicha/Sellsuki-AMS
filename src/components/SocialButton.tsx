@@ -48,7 +48,7 @@ interface SocialButtonProps {
 export function SocialButton({ provider, onClick }: SocialButtonProps) {
   return (
     <DSButton
-      variant="solid_light"
+      variant="outline"
       size="lg"
       fullWidth
       leftIcon={PROVIDER_ICONS[provider]}

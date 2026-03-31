@@ -3,59 +3,62 @@ import {
   DSButton,
   DSInput,
   Divider,
-  Avatar,
   ConfirmDialog,
+  Card,
+  CardBody,
+  Badge,
 } from '@uxuissk/design-system'
 import { ArrowLeft } from 'lucide-react'
 
 import type { AuthScreen, AuthState, SocialProvider, SocialUser, UserAccount } from '../types/auth'
 import { SocialButton, SOCIAL_PROVIDERS } from '../components/SocialButton'
 import { SellsukiLogo } from '../components/SellsukiLogo'
+import DashboardPage from './DashboardPage'
 
 // ── Background illustration URLs (from Figma design)
-const BG_LEFT  = 'https://www.figma.com/api/mcp/asset/43856c7e-fc77-4625-824e-f2a9731b3c77'
+const BG_LEFT = 'https://www.figma.com/api/mcp/asset/43856c7e-fc77-4625-824e-f2a9731b3c77'
 const BG_RIGHT = 'https://www.figma.com/api/mcp/asset/c26e7006-05dc-4d74-8a1b-234505b1bcd3'
 
 // ── Mock social accounts
 const SOCIAL_MOCK: Record<SocialProvider, SocialUser> = {
-  Google:   { name: 'ก้อง กัลยกร', email: 'kong@gmail.com',  initial: 'ก', provider: 'Google'   },
-  Facebook: { name: 'ฝน มาลัย',    email: 'fon@fb.com',      initial: 'ฝ', provider: 'Facebook' },
-  Line:     { name: 'ปอ สุดาพร',   email: 'po@line.me',       initial: 'ป', provider: 'Line'     },
+  Google: { name: 'ก้อง กัลยกร', email: 'kong@gmail.com', initial: 'ก', provider: 'Google' },
+  Facebook: { name: 'ฝน มาลัย', email: 'fon@fb.com', initial: 'ฝ', provider: 'Facebook' },
+  Line: { name: 'ปอ สุดาพร', email: 'po@line.me', initial: 'ป', provider: 'Line' },
 }
 
-const isValidEmail    = (v: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim())
+const isValidEmail = (v: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim())
 const isValidPassword = (v: string) => v.length >= 8
 
 const INITIAL_STATE: AuthState = {
-  screen: 'sign-in',
-  email: '',
+  screen: 'Dashboard',
+  email: 'hello@sellsuki.com',
   accounts: {
     'hello@sellsuki.com': { name: 'สมชาย ใจดี', email: 'hello@sellsuki.com' },
-    'test@sellsuki.com':  { name: 'ทดสอบ ระบบ', email: 'test@sellsuki.com'  },
+    'test@sellsuki.com': { name: 'ทดสอบ ระบบ', email: 'test@sellsuki.com' },
   },
-  socialUser:    null,
-  loggedInUser:  null,
+  socialUser: null,
+  loggedInUser: { name: 'สมชาย ใจดี', email: 'hello@sellsuki.com' },
 }
 
-const SCREENS_WITH_BG:     AuthScreen[] = ['sign-in', 'sign-in-email-dup']
-const SCREENS_WITH_FOOTER: AuthScreen[] = ['sign-in', 'sign-in-email-dup']
+const SCREENS_WITH_BG: AuthScreen[] = ['sign-in', 'sign-in-email-dup']
+
 
 // ─────────────────────────────────────────────────
 export default function AuthPage() {
-  const [state, setState]                         = useState<AuthState>(INITIAL_STATE)
-  const [prevScreen, setPrevScreen]               = useState<AuthScreen>('sign-in')
-  const [showLogoutDialog, setShowLogoutDialog]   = useState(false)
+  const [state, setState] = useState<AuthState>(INITIAL_STATE)
+  const [prevScreen, setPrevScreen] = useState<AuthScreen>('sign-in')
+  const [showLogoutDialog, setShowLogoutDialog] = useState(false)
 
-  const [emailInput,       setEmailInput]       = useState('')
-  const [passwordInput,    setPasswordInput]    = useState('')
-  const [firstNameInput,   setFirstNameInput]   = useState('')
-  const [lastNameInput,    setLastNameInput]     = useState('')
-  const [newPassword,      setNewPassword]      = useState('')
-  const [confirmPassword,  setConfirmPassword]  = useState('')
-  const [forgotEmail,      setForgotEmail]      = useState('')
+  const [emailInput, setEmailInput] = useState('')
+  const [passwordInput, setPasswordInput] = useState('')
+  const [firstNameInput, setFirstNameInput] = useState('')
+  const [lastNameInput, setLastNameInput] = useState('')
+  const [newPassword, setNewPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
+  const [forgotEmail, setForgotEmail] = useState('')
 
   const [resendSeconds, setResendSeconds] = useState(60)
-  const [resendActive,  setResendActive]  = useState(false)
+  const [resendActive, setResendActive] = useState(false)
   const resendRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   const goScreen = useCallback((screen: AuthScreen) => {
@@ -100,7 +103,7 @@ export default function AuthPage() {
     const account = state.accounts[state.email]
     if (account) {
       setState(prev => ({ ...prev, loggedInUser: account }))
-      goScreen('profile')
+      goScreen('Dashboard')
     }
   }, [passwordInput, state.accounts, state.email, goScreen])
 
@@ -115,7 +118,7 @@ export default function AuthPage() {
   const handleSetPasswordNext = useCallback(() => {
     if (!isValidPassword(newPassword) || newPassword !== confirmPassword) return
     const newAccount: UserAccount = {
-      name:  `${firstNameInput.trim()} ${lastNameInput.trim()}`,
+      name: `${firstNameInput.trim()} ${lastNameInput.trim()}`,
       email: state.email,
     }
     setState(prev => ({
@@ -131,7 +134,7 @@ export default function AuthPage() {
     const account = state.accounts[state.email]
     if (account) {
       setState(prev => ({ ...prev, loggedInUser: account }))
-      goScreen('profile')
+      goScreen('Dashboard')
     }
   }, [state.accounts, state.email, goScreen])
 
@@ -141,7 +144,6 @@ export default function AuthPage() {
     goScreen('forgot-sent')
   }, [forgotEmail, goScreen])
 
-  // ── Social
   const handleSocialSignIn = useCallback((provider: SocialProvider) => {
     const u = SOCIAL_MOCK[provider]
     setState(prev => ({
@@ -149,18 +151,12 @@ export default function AuthPage() {
       accounts: prev.accounts[u.email]
         ? prev.accounts
         : { ...prev.accounts, [u.email]: { name: u.name, email: u.email } },
+      loggedInUser: { name: u.name, email: u.email }
     }))
-    goScreen('social-cb')
+    goScreen('Dashboard')
   }, [goScreen])
 
-  const handleSocialConfirm = useCallback(() => {
-    if (!state.socialUser) return
-    setState(prev => ({
-      ...prev,
-      loggedInUser: { name: prev.socialUser!.name, email: prev.socialUser!.email },
-    }))
-    goScreen('profile')
-  }, [state.socialUser, goScreen])
+  // handleSocialConfirm was removed since we log in immediately without the callback screen.
 
   // ── Logout
   const handleLogout = useCallback(() => {
@@ -175,23 +171,29 @@ export default function AuthPage() {
     if (state.screen === 'forgot' && state.email && !forgotEmail) setForgotEmail(state.email)
   }, [state.screen, state.email, forgotEmail])
 
-  const showBgArt  = SCREENS_WITH_BG.includes(state.screen)
-  const showFooter = SCREENS_WITH_FOOTER.includes(state.screen)
+  const showBgArt = SCREENS_WITH_BG.includes(state.screen)
+
   const passwordsValid = isValidPassword(newPassword) && newPassword === confirmPassword
 
   // ──────────────────────────────────────────────────────────
+  if (state.screen === 'Dashboard') {
+    return <DashboardPage user={state.loggedInUser || { name: 'ผู้ใช้งานระบบ', email: state.email || '' } as any} onLogout={handleLogout} />
+  }
+
   return (
     <div className="auth-bg">
 
       {showBgArt && (
         <div className="auth-bg-art">
-          <img src={BG_LEFT}  alt="" aria-hidden />
+          <img src={BG_LEFT} alt="" aria-hidden />
           <img src={BG_RIGHT} alt="" aria-hidden />
         </div>
       )}
 
       <div className="auth-container">
-        <div className="auth-card">
+        <Card elevation="sm" className="auth-card">
+          <CardBody>
+            <div style={{ padding: 'clamp(var(--space-24), 5vw, var(--space-40))' }}>
 
           {/* ═══ SIGN-IN: email (+ email-dup error) ═══ */}
           {(state.screen === 'sign-in' || state.screen === 'sign-in-email-dup') && (
@@ -248,20 +250,33 @@ export default function AuthPage() {
                 </p>
               </div>
 
-              <div style={{ marginTop: 20, marginBottom: 4 }}>
+              <div style={{ marginTop: 'var(--space-20)', marginBottom: 'var(--space-4)' }}>
                 <Divider label="หรือ" />
               </div>
 
-              <div className="auth-social-group" style={{ marginTop: 12 }}>
+              <div className="auth-social-group" style={{ marginTop: 'var(--space-12)' }}>
                 {SOCIAL_PROVIDERS.map(p => (
                   <SocialButton key={p} provider={p} onClick={handleSocialSignIn} />
                 ))}
               </div>
 
+              {/* ── Figma Disclaimer ── */}
+              <p className="auth-footer-disclaimer" style={{ 
+                marginTop: 'var(--space-24)', 
+                fontSize: 10, 
+                color: 'var(--text-disabled)', 
+                textAlign: 'left',
+                lineHeight: 1.6
+              }}>
+                การคลิก "เข้าสู่ระบบ" ข้างต้น แสดงว่าคุณได้อ่านและเข้าใจ และยินยอมตาม{' '}
+                <a className="ds-link" style={{ fontSize: 10, color: 'inherit', textDecoration: 'underline' }}>นโยบายความเป็นส่วนตัว</a> และ{' '}
+                <a className="ds-link" style={{ fontSize: 10, color: 'inherit', textDecoration: 'underline' }}>คุ้มครองข้อมูลส่วนบุคคล</a>
+              </p>
+
               {/* DEV: trigger duplicate email demo */}
-              <p style={{ marginTop: 16, fontSize: 11, color: '#d1d5db', textAlign: 'center' }}>
-                <a style={{ color: '#d1d5db', cursor: 'pointer', fontSize: 11 }}
-                   onClick={() => setState(prev => ({ ...prev, screen: 'sign-in-email-dup' }))}>
+              <p style={{ marginTop: 'var(--space-16)', fontSize: 11, color: 'var(--text-disabled)', textAlign: 'center' }}>
+                <a style={{ color: 'var(--text-disabled)', cursor: 'pointer', fontSize: 11 }}
+                  onClick={() => setState(prev => ({ ...prev, screen: 'sign-in-email-dup' }))}>
                   [DEV: แสดง error อีเมลซ้ำ]
                 </a>
               </p>
@@ -274,7 +289,7 @@ export default function AuthPage() {
               <div className="auth-card-header">
                 <SellsukiLogo size={80} />
                 <h1 className="auth-title">ยินดีต้อนรับสู่ Sellsuki</h1>
-                <p className="auth-email-chip">{state.email}</p>
+                <Badge variant="secondary" size="md">{state.email}</Badge>
                 <a className="ds-link" onClick={() => { setPasswordInput(''); goScreen('sign-in') }}>
                   ไม่ใช่บัญชีนี้ใช่ไหม? ใช้อีเมลอื่นแทน
                 </a>
@@ -324,9 +339,9 @@ export default function AuthPage() {
               </div>
 
               {/* DEV: trigger wrong password demo */}
-              <p style={{ marginTop: 12, fontSize: 11, color: '#d1d5db', textAlign: 'center' }}>
-                <a style={{ color: '#d1d5db', cursor: 'pointer', fontSize: 11 }}
-                   onClick={() => goScreen('password-error')}>
+              <p style={{ marginTop: 'var(--space-12)', fontSize: 11, color: 'var(--text-disabled)', textAlign: 'center' }}>
+                <a style={{ color: 'var(--text-disabled)', cursor: 'pointer', fontSize: 11 }}
+                  onClick={() => goScreen('password-error')}>
                   [DEV: แสดง error รหัสผ่านไม่ถูกต้อง]
                 </a>
               </p>
@@ -339,7 +354,7 @@ export default function AuthPage() {
               <div className="auth-card-header">
                 <SellsukiLogo size={80} />
                 <h1 className="auth-title">สมัครสมาชิก Sellsuki</h1>
-                <p className="auth-email-chip">{state.email}</p>
+                <Badge variant="secondary" size="md">{state.email}</Badge>
                 <a className="ds-link" onClick={() => goScreen('sign-in')}>
                   สมัครด้วยอีเมลอื่น
                 </a>
@@ -378,7 +393,7 @@ export default function AuthPage() {
               <div className="auth-card-header">
                 <SellsukiLogo size={80} />
                 <h1 className="auth-title">สมัครสมาชิก Sellsuki</h1>
-                <p className="auth-email-chip">{state.email}</p>
+                <Badge variant="secondary" size="md">{state.email}</Badge>
                 <a className="ds-link" onClick={() => goScreen('sign-in')}>
                   สมัครด้วยอีเมลอื่น
                 </a>
@@ -435,17 +450,17 @@ export default function AuthPage() {
             <>
               <div className="verify-icon">
                 <svg viewBox="0 0 80 80" fill="none" width="80" height="80">
-                  <rect width="80" height="80" rx="40" fill="#FEF3C7"/>
-                  <rect x="14" y="24" width="52" height="38" rx="4" fill="#F59E0B"/>
-                  <path d="M14 28L40 46L66 28" stroke="#fff" strokeWidth="3"
-                    strokeLinecap="round" strokeLinejoin="round"/>
+                  <rect width="80" height="80" rx="40" fill="var(--bg-warning-light, #fffbeb)" />
+                  <rect x="14" y="24" width="52" height="38" rx="4" fill="var(--bg-warning-solid)" />
+                  <path d="M14 28L40 46L66 28" stroke="var(--text-white)" strokeWidth="3"
+                    strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               </div>
 
-              <div className="auth-card-header" style={{ marginBottom: 20 }}>
+              <div className="auth-card-header" style={{ marginBottom: 'var(--space-20)' }}>
                 <h1 className="auth-title">กรุณายืนยันอีเมล</h1>
                 <p className="auth-subtitle">ตรวจสอบอีเมลที่ถูกส่งไปที่</p>
-                <p style={{ fontSize: 15, fontWeight: 600, color: '#1b8bf5' }}>{state.email}</p>
+                <p style={{ fontSize: 15, fontWeight: 600, color: 'var(--text-brand-primary)' }}>{state.email}</p>
                 <p className="auth-subtitle">เพื่อยืนยันบัญชีของคุณและเริ่มต้นใช้งาน</p>
               </div>
 
@@ -459,9 +474,9 @@ export default function AuthPage() {
                 </DSButton>
               </div>
 
-              <p style={{ marginTop: 12, fontSize: 11, color: '#d1d5db', textAlign: 'center' }}>
-                <a style={{ color: '#d1d5db', cursor: 'pointer', fontSize: 11 }}
-                   onClick={() => goScreen('email-confirmed')}>
+              <p style={{ marginTop: 'var(--space-12)', fontSize: 11, color: 'var(--text-disabled)', textAlign: 'center' }}>
+                <a style={{ color: 'var(--text-disabled)', cursor: 'pointer', fontSize: 11 }}
+                  onClick={() => goScreen('email-confirmed')}>
                   [DEV: จำลองยืนยันอีเมลสำเร็จ →]
                 </a>
               </p>
@@ -475,7 +490,7 @@ export default function AuthPage() {
                 <SellsukiLogo size={80} />
               </div>
 
-              <div className="auth-card-header" style={{ marginBottom: 24 }}>
+              <div className="auth-card-header" style={{ marginBottom: 'var(--space-24)' }}>
                 <h1 className="auth-title">
                   ยินดีด้วย อีเมลของคุณได้รับ<br />การยืนยันแล้ว
                 </h1>
@@ -523,7 +538,7 @@ export default function AuthPage() {
                 />
               </div>
 
-              <div className="auth-actions" style={{ marginTop: 16 }}>
+              <div className="auth-actions" style={{ marginTop: 'var(--space-16)' }}>
                 <DSButton
                   variant="primary" size="lg" fullWidth
                   disabled={!isValidEmail(forgotEmail)}
@@ -540,16 +555,16 @@ export default function AuthPage() {
             <div style={{ textAlign: 'center' }}>
               <div className="verify-icon" style={{ marginBottom: 16 }}>
                 <svg viewBox="0 0 80 80" fill="none" width="80" height="80">
-                  <rect width="80" height="80" rx="40" fill="#ECFDF5"/>
-                  <path d="M22 40l12 12 24-28" stroke="#059669" strokeWidth="4"
-                    strokeLinecap="round" strokeLinejoin="round"/>
+                  <rect width="80" height="80" rx="40" fill="var(--bg-success-light, #ecfdf5)" />
+                  <path d="M22 40l12 12 24-28" stroke="var(--bg-success-solid)" strokeWidth="4"
+                    strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               </div>
 
-              <div className="auth-card-header" style={{ marginBottom: 20 }}>
+              <div className="auth-card-header" style={{ marginBottom: 'var(--space-20)' }}>
                 <h1 className="auth-title">ส่งอีเมลแล้ว!</h1>
                 <p className="auth-subtitle">ลิงก์รีเซ็ตรหัสผ่านถูกส่งไปยัง</p>
-                <p style={{ fontSize: 15, fontWeight: 600, color: '#1b8bf5' }}>{forgotEmail}</p>
+                <p style={{ fontSize: 15, fontWeight: 600, color: 'var(--text-brand-primary)' }}>{forgotEmail}</p>
                 <p className="auth-subtitle">กรุณาตรวจสอบกล่องอีเมล</p>
               </div>
 
@@ -558,7 +573,7 @@ export default function AuthPage() {
                   กลับหน้าเข้าสู่ระบบ
                 </DSButton>
               </div>
-              <p style={{ marginTop: 12, fontSize: 14, color: '#6b7280' }}>
+              <p style={{ marginTop: 'var(--space-12)', fontSize: 14, color: 'var(--text-secondary)' }}>
                 ไม่ได้รับอีเมล?{' '}
                 <a className="ds-link" onClick={() => goScreen('forgot')}>ส่งอีกครั้ง</a>
               </p>
@@ -567,84 +582,26 @@ export default function AuthPage() {
 
           {/* ═══ SOCIAL-CB ═══ */}
           {state.screen === 'social-cb' && state.socialUser && (
-            <>
-              <div className="auth-card-header">
-                <Avatar name={state.socialUser.name} size="xl" />
-                <h1 className="auth-title" style={{ marginTop: 8 }}>{state.socialUser.name}</h1>
-                <p className="auth-subtitle">ผ่าน {state.socialUser.provider}</p>
-              </div>
-
-              <p className="auth-subtitle" style={{ textAlign: 'center' }}>
-                ต้องการเข้าสู่ระบบด้วยบัญชี{' '}
-                <strong style={{ color: '#1f2937' }}>{state.socialUser.provider}</strong>{' '}
-                นี้ใช่หรือไม่?
-              </p>
-
-              <div className="auth-actions" style={{ marginTop: 20 }}>
-                <DSButton variant="primary" size="lg" fullWidth onClick={handleSocialConfirm}>
-                  ยืนยัน เข้าสู่ระบบ
-                </DSButton>
-                <DSButton variant="outline" size="lg" fullWidth onClick={() => goScreen('sign-in')}>
-                  ยกเลิก
-                </DSButton>
-              </div>
-            </>
-          )}
-
-          {/* ═══ PROFILE ═══ */}
-          {state.screen === 'profile' && state.loggedInUser && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 12, textAlign: 'center' }}>
-              <div style={{ display: 'flex', justifyContent: 'center' }}>
-                <Avatar name={state.loggedInUser.name} size="xl" />
-              </div>
-              <div>
-                <p style={{ fontSize: 20, fontWeight: 700, color: '#1f2937' }}>
-                  {state.loggedInUser.name}
-                </p>
-                <p style={{ fontSize: 14, color: '#6b7280', marginTop: 4 }}>
-                  {state.loggedInUser.email}
-                </p>
-              </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginTop: 8 }}>
-                <div className="info-tile">
-                  <p className="info-tile-label">สมาชิกตั้งแต่</p>
-                  <p className="info-tile-value">มีนาคม 2025</p>
-                </div>
-                <div className="info-tile">
-                  <p className="info-tile-label">แผนการใช้งาน</p>
-                  <p className="info-tile-value" style={{ color: '#1b8bf5' }}>Sellsuki Pro</p>
-                </div>
-              </div>
-              <DSButton
-                variant="destructive" size="lg" fullWidth
-                onClick={() => setShowLogoutDialog(true)}
-                style={{ marginTop: 8 }}
-              >
-                ออกจากระบบ
-              </DSButton>
+            <div style={{ padding: '40px', textAlign: 'center' }}>
+              กำลังเข้าสู่ระบบและโหลดหน้า Dashboard...
             </div>
           )}
 
-        </div>{/* /.auth-card */}
+          {/* Profile screen has been moved to DashboardPage early return */}
 
-        {showFooter && (
-          <div className="auth-footer">
-            การคลิก "เข้าสู่ระบบ" ข้างต้น แสดงว่าคุณได้อ่านและเข้าใจ และยินยอมตาม{' '}
-            <a className="ds-link">นโยบายความเป็นส่วนตัว</a>{' '}
-            และ <a className="ds-link">คุ้มครองข้อมูลส่วนบุคคล</a>
-          </div>
-        )}
+            </div>
+          </CardBody>
+        </Card>{/* /.auth-card */}
+
+
       </div>
 
       <ConfirmDialog
         open={showLogoutDialog}
         title="ต้องการออกจากระบบ?"
-        message="คุณแน่ใจหรือไม่ว่าต้องการออกจากระบบ คุณจะต้องเข้าสู่ระบบใหม่อีกครั้ง"
-        confirmText="ออกจากระบบ"
-        cancelText="ยกเลิก"
-        variant="destructive"
+        description="คุณแน่ใจหรือไม่ว่าต้องการออกจากระบบ คุณจะต้องเข้าสู่ระบบใหม่อีกครั้ง"
         onConfirm={handleLogout}
-        onCancel={() => setShowLogoutDialog(false)}
+        onClose={() => setShowLogoutDialog(false)}
       />
     </div>
   )

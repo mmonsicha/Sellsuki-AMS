@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Sellsuki — เข้าสู่ระบบ</title>
+<!--
+  DS Font Rule:
+  • DB HeaventRounded — headings, body, labels, captions (loaded via @uxuissk/design-system)
+  • Inter             — buttons only
+  • Noto Sans Thai    — web-safe fallback when DS package unavailable
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+/* ════════════════════════════════════════════════
+   SELLSUKI DESIGN SYSTEM — CSS Tokens
+   Source : @uxuissk/design-system
+   Audited: 2025-03-30 by /sellsuki-ux-designer
+════════════════════════════════════════════════ */
+:root {
+  /* Sky palette */
+  --sky-50:  #f0f9ff;
+  --sky-200: #bae6fd;  /* disabled primary button */
+  --sky-500: #32a9ff;  /* bg-brand-solid — PRIMARY */
+  --sky-600: #1b8bf5;  /* hover / Link token */
+  --sky-700: #1478dc;
+
+  /* Gray palette */
+  --gray-50:  #f9fafb;
+  --gray-100: #f3f4f6;
+  --gray-200: #e5e7eb;
+  --gray-300: #d1d5db;
+  --gray-400: #9ca3af;
+  --gray-500: #6b7280;
+  --gray-800: #1f2937;
+
+  /* Status */
+  --rose-50:     #fff1f2;
+  --rose-500:    #f43f5e;
+  --rose-600:    #e11d48;
+  --rose-700:    #be123c;
+  --emerald-50:  #ecfdf5;
+  --emerald-600: #059669;
+  --amber-500:   #f59e0b;
+
+  /* Semantic */
+  --bg-page:          #f9fafb;
+  --bg-primary:       #ffffff;
+  --bg-primary-hover: var(--gray-50);
+  --bg-secondary:     var(--gray-100);
+  --bg-brand-solid:   var(--sky-500);
+  --text-primary:     var(--gray-800);
+  --text-secondary:   var(--gray-500);
+  --text-placeholder: var(--gray-400);
+  --text-disabled:    var(--gray-400);
+  --text-link:        var(--sky-600);
+  --text-white:       #ffffff;
+  --stroke-primary:   var(--gray-200);
+  --stroke-secondary: var(--gray-300);
+  --stroke-focus:     var(--sky-500);
+  --stroke-danger:    var(--rose-600);
+
+  /* Typography — ✅ DB HeaventRounded first */
+  --font-body:   'DB HeaventRounded', 'Noto Sans Thai', sans-serif;
+  --font-button: 'Inter', sans-serif;
+  --text-h3:      28px;
+  --text-p:       16px;
+  --text-caption: 14px;
+  --text-label:   14px;
+  --text-button:  14px;
+
+  /* Radius */
+  --radius-md:   8px;
+  --radius-xl:  16px;
+  --radius-full: 9999px;
+
+  /* Elevation — DS: elevation-sm ONLY */
+  --elevation-sm: 0px 1px 2px 0px rgba(0,0,0,.05);
+
+  /* Spacing */
+  --sp-4:  4px;  --sp-8:  8px;  --sp-12: 12px;
+  --sp-16: 16px; --sp-20: 20px; --sp-24: 24px;
+  --sp-32: 32px; --sp-40: 40px;
+}
+
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0 }
+html { -webkit-text-size-adjust:100% }
+
+body {
+  font-family: var(--font-body);   /* ✅ DB HeaventRounded */
+  font-size: var(--text-p);
+  color: var(--text-primary);
+  background: var(--bg-page);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+}
+
+/* ════ BG illustrations ════ */
+.bg-art {
+  position: fixed; inset: 0;
+  display: flex; align-items: flex-end; justify-content: space-between;
+  pointer-events: none; z-index: 0;
+}
+.bg-art img {
+  width: clamp(200px, 28vw, 520px);
+  height: clamp(200px, 28vw, 520px);
+  object-fit: contain; flex-shrink: 0;
+}
+@media (max-width: 640px) { .bg-art { display:none } }
+
+/* ════ Demo nav ════ */
+.demo-nav {
+  position: fixed; top: 14px; left: 50%; transform: translateX(-50%);
+  display: flex; gap: 3px; flex-wrap: wrap; justify-content: center;
+  background: rgba(255,255,255,.93);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-full);
+  padding: 5px; z-index: 300;
+  box-shadow: 0 2px 12px rgba(0,0,0,.08);
+  max-width: 95vw;
+}
+.demo-nav button {
+  padding: 4px 12px; border-radius: var(--radius-full); border: none;
+  background: transparent; font-family: var(--font-body); font-size: 12px;
+  color: var(--text-secondary); cursor: pointer; white-space: nowrap; transition: all .15s;
+}
+.demo-nav button.on { background: var(--sky-500); color: #fff; font-weight: 700 }
+.demo-nav button:hover:not(.on) { background: var(--gray-100); color: var(--text-primary) }
+
+/* ════ Page routing ════ */
+.page { display:none }
+.page.active { display:flex; flex-direction:column; align-items:center }
+
+/* ════ Scene ════ */
+.scene {
+  position: relative; z-index: 1;
+  display: flex; flex-direction: column; align-items: center;
+  gap: var(--sp-16); padding: 80px 16px 24px;
+  animation: fadeUp .2s ease;
+  width: 100%;
+}
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(6px) }
+  to   { opacity:1; transform:translateY(0) }
+}
+
+/* ════ DS Card ════ */
+.card {
+  background: var(--bg-primary);
+  border: 1px solid var(--stroke-primary);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--elevation-sm);   /* ✅ elevation-sm only */
+  width: 100%; max-width: 440px;
+  padding: clamp(24px,5vw,40px);
+}
+
+/* ════ Card header ════ */
+.card-hd {
+  display: flex; flex-direction: column; align-items: center;
+  text-align: center; gap: var(--sp-8); margin-bottom: var(--sp-32);
+}
+.logo-wrap {
+  width: 80px; height: 80px;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: var(--sp-4);
+}
+
+/* Typography tokens ✅ */
+.ds-h3 {
+  font-family: var(--font-body);
+  font-size: clamp(20px,4.5vw,var(--text-h3));
+  font-weight: 700; color: var(--text-primary); line-height: 1.25;
+}
+.ds-body { font-size: var(--text-p); color: var(--text-secondary); line-height: 1.5 }
+.ds-caption { font-size: var(--text-caption); color: var(--text-secondary); line-height: 1.5 }
+.ds-link {
+  color: var(--text-link); text-decoration: none; cursor: pointer;
+  font-size: var(--text-caption); transition: color .15s;
+}
+.ds-link:hover { color: var(--sky-700); text-decoration: underline }
+.email-chip { font-size: var(--text-caption); color: var(--text-secondary) }
+
+/* ════ DS FormField ════ */
+.ds-fields { display: flex; flex-direction: column; gap: var(--sp-16); width: 100% }
+.ds-field  { display: flex; flex-direction: column; gap: var(--sp-4); width: 100% }
+.ds-label  {
+  font-family: var(--font-body);
+  font-size: var(--text-label); font-weight: 400; color: var(--text-primary);
+  display: flex; align-items: center; gap: var(--sp-4);
+}
+.ds-label .req { color: var(--rose-500) }
+
+/* DS Input — outlined, size=lg (40px) */
+.iw { position: relative; width: 100% }
+.ds-input {
+  display: block; width: 100%; height: 40px;
+  padding: 0 var(--sp-16);
+  border: 1px solid var(--stroke-primary);
+  border-radius: var(--radius-md);
+  background: var(--bg-primary);
+  font-family: var(--font-body); font-size: var(--text-p); color: var(--text-primary);
+  outline: none; transition: border-color .15s, box-shadow .15s;
+  -webkit-appearance: none;
+}
+.ds-input::placeholder { color: var(--text-placeholder) }
+.ds-input:focus {
+  border-color: var(--stroke-focus);
+  box-shadow: 0 0 0 3px rgba(50,169,255,.16);
+}
+/* ✅ error state — DSInput state="error" */
+.ds-input.error {
+  border-color: var(--stroke-danger);
+  padding-right: 44px;  /* room for warning icon */
+}
+.ds-input.error:focus { box-shadow: 0 0 0 3px rgba(225,29,72,.14) }
+.ds-input.has-toggle { padding-right: 44px }
+
+/* Error message row — DSInput errorMessage */
+.ds-field-error {
+  display: flex; align-items: center; gap: 4px;
+  font-size: 12px; color: var(--rose-600); line-height: 1.4;
+  margin-top: 2px;
+}
+.ds-field-error svg { flex-shrink: 0 }
+
+/* Warning icon inside input (error state suffix) */
+.input-icon {
+  position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+  display: flex; align-items: center;
+}
+
+/* Password toggle (showPasswordToggle) */
+.eye-btn {
+  position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+  background: none; border: none; cursor: pointer; color: var(--text-placeholder);
+  display: flex; align-items: center; padding: 4px; border-radius: 4px;
+  transition: color .15s;
+}
+.eye-btn:hover { color: var(--text-secondary) }
+
+/* Forgot link — right aligned */
+.forgot-row { display: flex; justify-content: flex-end; margin-top: var(--sp-4) }
+
+/* ════ DS Button (DSButton component) ════
+   Font: Inter ✅  Height lg=40px ✅ */
+.ds-actions { display:flex; flex-direction:column; gap:var(--sp-12); margin-top:var(--sp-8); width:100% }
+.ds-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  gap: var(--sp-8); width: 100%; height: 40px;
+  padding: 0 var(--sp-20);
+  border: 1px solid transparent; border-radius: var(--radius-md);
+  font-family: var(--font-button);  /* ✅ Inter for buttons */
+  font-size: var(--text-button); font-weight: 600; letter-spacing: .01em;
+  cursor: pointer; white-space: nowrap;
+  transition: background .15s, border-color .15s, color .15s;
+}
+/* primary */
+.ds-btn-primary { background: var(--sky-500); border-color: var(--sky-500); color: #fff }
+.ds-btn-primary:hover:not(.disabled) { background: var(--sky-600); border-color: var(--sky-600) }
+/* disabled — ✅ Sky-200 muted blue (NOT gray) */
+.ds-btn-primary.disabled {
+  background: var(--sky-200); border-color: var(--sky-200);
+  color: #fff; cursor: not-allowed; pointer-events: none;
+}
+/* outline */
+.ds-btn-outline {
+  background: transparent; border-color: var(--stroke-primary); color: var(--text-primary);
+}
+.ds-btn-outline:hover { background: var(--bg-primary-hover); border-color: var(--stroke-secondary) }
+/* solid_light */
+.ds-btn-solid-light {
+  background: var(--bg-primary); border-color: var(--stroke-primary); color: var(--text-primary);
+}
+.ds-btn-solid-light:hover { background: var(--bg-primary-hover) }
+/* destructive */
+.ds-btn-destructive { background: var(--rose-600); border-color: var(--rose-600); color: #fff }
+.ds-btn-destructive:hover { background: var(--rose-700); border-color: var(--rose-700) }
+/* icon inside btn */
+.ds-btn svg { width:16px; height:16px; flex-shrink:0 }
+
+/* ════ DS Divider (label="หรือ") ════ */
+.ds-divider {
+  display: flex; align-items: center; gap: var(--sp-12); width: 100%;
+  margin: var(--sp-4) 0;
+}
+.ds-divider::before,.ds-divider::after {
+  content:''; flex:1; height:1px; background: var(--stroke-primary);
+}
+.ds-divider span { font-size:13px; color:var(--text-placeholder); white-space:nowrap }
+
+/* ════ Social button group ════ */
+.social-group { display:flex; flex-direction:column; gap:var(--sp-12); width:100% }
+.si-icon { width:20px; height:20px; flex-shrink:0; display:flex; align-items:center }
+.si-icon svg { width:20px; height:20px }
+
+/* ════ Back button (ghost) ════ */
+.back-btn {
+  display: inline-flex; align-items: center; gap: var(--sp-4);
+  background: none; border: none; cursor: pointer;
+  color: var(--text-secondary); font-family: var(--font-body);
+  font-size: var(--text-caption); padding: 0; margin-bottom: var(--sp-16);
+  transition: color .15s; align-self: flex-start;
+}
+.back-btn:hover { color: var(--text-primary) }
+
+/* ════ Verify icon wrap ════ */
+.verify-icon { display:flex; align-items:center; justify-content:center;
+  width:80px; height:80px; margin:0 auto var(--sp-8) }
+
+/* ════ DS Avatar (initials) ════ */
+.ds-avatar {
+  display: inline-flex; align-items: center; justify-content: center;
+  border-radius: var(--radius-full);
+  background: linear-gradient(135deg, var(--sky-500), #38bdf8);
+  color: #fff; font-family: var(--font-body); font-weight: 700; flex-shrink: 0;
+}
+.ds-avatar-xl { width:80px; height:80px; font-size:30px }
+
+/* ════ Info tiles (Profile) ════ */
+.info-tile { background: var(--bg-secondary); border-radius: var(--radius-md); padding: 12px 16px; text-align:left }
+.info-tile-label { font-size:12px; color:var(--text-secondary); margin-bottom:4px }
+.info-tile-value { font-size:var(--text-p); font-weight:600; color:var(--text-primary) }
+
+/* ════ DS Modal / ConfirmDialog ════ */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,.4); z-index: 500;
+  display: none; align-items: center; justify-content: center; padding: 16px;
+}
+.modal-overlay.open { display:flex }
+.modal-box {
+  background: var(--bg-primary); border-radius: var(--radius-xl);
+  padding: var(--sp-32) var(--sp-24); width:100%; max-width:380px;
+  box-shadow: 0 20px 60px rgba(0,0,0,.18);
+  display:flex; flex-direction:column; gap:var(--sp-16); align-items:center; text-align:center;
+  animation: mPop .2s cubic-bezier(.34,1.56,.64,1) both;
+}
+@keyframes mPop { from{transform:scale(.9);opacity:0} to{transform:scale(1);opacity:1} }
+.modal-icon { width:56px; height:56px; border-radius:var(--radius-full); background:var(--rose-50);
+  display:flex; align-items:center; justify-content:center }
+.modal-title { font-size:18px; font-weight:700; color:var(--text-primary) }
+.modal-desc  { font-size:var(--text-caption); color:var(--text-secondary); line-height:1.6 }
+.modal-actions { display:flex; gap:var(--sp-12); width:100% }
+.modal-actions .ds-btn { flex:1 }
+
+/* ════ Page footer ════ */
+.page-footer {
+  position: relative; z-index:1; max-width:440px; width:100%;
+  font-size:12px; color:var(--text-secondary); line-height:1.7; text-align:left;
+}
+
+/* ════ Utilities ════ */
+.mt-4  { margin-top:var(--sp-4)  } .mt-8  { margin-top:var(--sp-8)  }
+.mt-12 { margin-top:var(--sp-12) } .mt-16 { margin-top:var(--sp-16) }
+.mt-20 { margin-top:var(--sp-20) } .mt-32 { margin-top:var(--sp-32) }
+.tc { text-align:center }
+.gap-12 { display:flex; flex-direction:column; gap:var(--sp-12) }
+
+/* DEV hint text */
+.dev-hint { font-size:11px; color:var(--gray-300); text-align:center; cursor:pointer; margin-top:var(--sp-12) }
+.dev-hint:hover { color:var(--gray-400) }
+</style>
+</head>
+<body>
+
+<!-- BG art (sign-in screens only) -->
+<div class="bg-art" id="bg-art">
+  <img src="https://www.figma.com/api/mcp/asset/43856c7e-fc77-4625-824e-f2a9731b3c77" alt=""/>
+  <img src="https://www.figma.com/api/mcp/asset/c26e7006-05dc-4d74-8a1b-234505b1bcd3" alt=""/>
+</div>
+
+<!-- ════ Demo Nav ════ -->
+<nav class="demo-nav">
+  <button class="on"   onclick="nav('sign-in')">Sign In</button>
+  <button              onclick="nav('password')">Password</button>
+  <button              onclick="nav('password-error')">PW Error ✦</button>
+  <button              onclick="nav('sign-up')">Sign Up</button>
+  <button              onclick="nav('set-password')">Set PW ✦</button>
+  <button              onclick="nav('verify-email')">Verify Email</button>
+  <button              onclick="nav('email-confirmed')">Email OK ✦</button>
+  <button              onclick="nav('forgot')">Forgot PW</button>
+  <button              onclick="nav('forgot-sent')">PW Sent</button>
+  <button              onclick="nav('social-cb')">Social CB</button>
+  <button              onclick="nav('profile')">Profile</button>
+</nav>
+
+<!-- ════════════════════════════════════════════════
+     Sellsuki Logo SVG (official vector from Sellsuki_Logo.svg)
+════════════════════════════════════════════════ -->
+<template id="tpl-logo">
+  <svg width="80" height="80" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Sellsuki">
+    <path d="M26.7304 19.8598H18.7227L22.727 23.8631L26.7304 19.8598Z" fill="#09193A"/>
+    <path d="M22.727 23.8631L30.9827 32.1188L35.5745 27.4101C36.1152 26.8562 36.4171 26.1133 36.4171 25.3388V19.8598H26.7314L22.727 23.8641L22.727 23.8631Z" fill="#E6EAEE"/>
+    <path d="M36.416 12.0614C36.412 11.3693 35.5461 11.0441 35.0562 11.534L26.7304 19.8598L22.726 23.8641L30.9817 32.1198L35.5735 27.4111C36.1142 26.8572 36.416 26.1143 36.416 25.3398V12.0777C36.416 12.0726 36.416 12.0665 36.416 12.0614Z" fill="url(#lg0)"/>
+    <path d="M18.7227 19.8598L9.28601 19.8598V25.3378C9.28601 26.1123 9.58888 26.8562 10.1296 27.4101L14.6004 31.9887L22.726 23.8631L18.7217 19.8587L18.7227 19.8598Z" fill="#E6EAEE"/>
+    <path d="M14.6014 31.9887L18.3243 35.802C20.8112 38.3489 24.9081 38.3479 27.393 35.7989L30.9817 32.1188L22.726 23.8631L14.6004 31.9887L14.6014 31.9887Z" fill="#E6EAEE"/>
+    <path d="M14.6014 31.9887L18.3243 35.802C20.8112 38.3489 24.9081 38.3479 27.393 35.7989L30.9817 32.1188L22.726 23.8631L14.6004 31.9887L14.6014 31.9887Z" fill="url(#lg1)"/>
+    <path d="M22.727 23.8631L10.4467 11.5827C10.0188 11.1548 9.28703 11.4567 9.28601 12.0624V25.0542C9.28601 26.0096 9.66002 26.9273 10.3278 27.6113L19.6343 37.1415C21.4038 38.9536 24.3176 38.9526 26.085 37.1395L30.504 32.6076C30.7693 32.3363 30.7662 31.9013 30.4979 31.633L22.727 23.8621L22.727 23.8631Z" fill="url(#lg2)"/>
+    <path d="M36.4171 9.96374C35.1487 9.96374 34.1212 8.96468 34.1212 7.73187C34.1212 7.19321 34.3173 6.69826 34.6446 6.31307C34.7177 6.22668 34.7991 6.14842 34.8834 6.07423C35.2899 5.71851 35.8266 5.5 36.4171 5.5C37.6468 5.5 38.6479 6.44113 38.7079 7.62211C38.7099 7.65869 38.714 7.69528 38.714 7.73187C38.714 7.76846 38.7099 7.80505 38.7079 7.84164C38.6489 9.02363 37.6478 9.96374 36.4171 9.96374Z" fill="url(#lg3)"/>
+    <defs>
+      <linearGradient id="lg0" x1="-27.3362" y1="21.9984" x2="84.879" y2="21.9984" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#00CFF4"/><stop offset="0.41" stop-color="#00BBF4"/><stop offset="1" stop-color="#0098F5"/>
+      </linearGradient>
+      <linearGradient id="lg1" x1="-6.72245" y1="22.0003" x2="87.057" y2="22.0003" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#00CFF4"/><stop offset="0.41" stop-color="#00BBF4"/><stop offset="1" stop-color="#0098F5"/>
+      </linearGradient>
+      <linearGradient id="lg2" x1="-39.2897" y1="22.0017" x2="54.4917" y2="22.0017" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#F5B059"/><stop offset="0.14" stop-color="#F4AA55"/><stop offset="0.33" stop-color="#F49949"/>
+        <stop offset="0.53" stop-color="#F37E37"/><stop offset="0.75" stop-color="#F35B1F"/>
+      </linearGradient>
+      <linearGradient id="lg3" x1="34.1212" y1="7.73187" x2="38.714" y2="7.73187" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#00CFF4"/><stop offset="0.41" stop-color="#00BBF4"/><stop offset="1" stop-color="#0098F5"/>
+      </linearGradient>
+    </defs>
+  </svg>
+</template>
+
+<!-- ════════════════════════════════════════════════
+     1. SIGN-IN — Email
+════════════════════════════════════════════════ -->
+<div id="sign-in" class="page active">
+<div class="scene">
+  <div class="card">
+    <div class="card-hd">
+      <div class="logo-wrap" data-logo></div>
+      <h1 class="ds-h3">ยินดีต้อนรับสู่ Sellsuki</h1>
+      <p class="ds-body">กรุณาล็อกอินเข้าสู่ระบบ</p>
+    </div>
+
+    <div class="ds-fields">
+      <div class="ds-field">
+        <label class="ds-label">อีเมล</label>
+        <div class="iw">
+          <input class="ds-input" type="email" id="si-email" placeholder="ระบุอีเมล"
+            oninput="checkEmail('si-email','btn-si-next')"
+            onkeydown="if(event.key==='Enter')siEmailNext()"/>
+        </div>
+      </div>
+    </div>
+
+    <div class="ds-actions mt-16">
+      <button class="ds-btn ds-btn-primary disabled" id="btn-si-next" onclick="siEmailNext()">ต่อไป</button>
+      <p class="ds-caption tc">
+        ยังไม่มีบัญชีเข้าใช้งาน?&nbsp;
+        <a class="ds-link" onclick="goSignUp()">สมัครบัญชีผู้ใช้ใหม่ที่นี่</a>
+      </p>
+    </div>
+
+    <div class="ds-divider mt-20"><span>หรือ</span></div>
+
+    <div class="social-group mt-12" id="si-social"></div>
+  </div>
+
+  <div class="page-footer">
+    การคลิก "เข้าสู่ระบบ" ข้างต้น แสดงว่าคุณได้อ่านและเข้าใจ และยินยอมตาม
+    <a class="ds-link">นโยบายความเป็นส่วนตัว</a> และ <a class="ds-link">คุ้มครองข้อมูลส่วนบุคคล</a>
+  </div>
+</div>
+</div>
+
+<!-- ════════════════════════════════════════════════
+     1b. SIGN-IN — Email Duplicate Error ✦
+════════════════════════════════════════════════ -->
+<div id="sign-in-email-dup" class="page">
+<div class="scene">
+  <div class="card">
+    <div class="card-hd">
+      <div class="logo-wrap" data-logo></div>
+      <h1 class="ds-h3">ยินดีต้อนรับสู่ Sellsuki</h1>
+      <p class="ds-body">กรุณาล็อกอินเข้าสู่ระบบ</p>
+    </div>
+
+    <div class="ds-fields">
+      <div class="ds-field">
+        <label class="ds-label">อีเมล</label>
+        <div class="iw">
+          <!-- ✅ DSInput state="error" — อีเมลซ้ำ -->
+          <input class="ds-input error" type="email" value="duplicate@example.com" readonly/>
+          <span class="input-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#e11d48" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+          </span>
+        </div>
+        <!-- ✅ DSInput errorMessage -->
+        <div class="ds-field-error">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          อีเมลนี้ถูกใช้งานแล้ว กรุณาใช้อีเมลอื่น
+        </div>
+      </div>
+    </div>
+
+    <div class="ds-actions mt-16">
+      <button class="ds-btn ds-btn-primary" onclick="nav('sign-in')">ต่อไป</button>
+      <p class="ds-caption tc">
+        ยังไม่มีบัญชีเข้าใช้งาน?&nbsp;<a class="ds-link" onclick="nav('sign-up')">สมัครบัญชีผู้ใช้ใหม่ที่นี่</a>
+      </p>
+    </div>
+
+    <div class="ds-divider mt-20"><span>หรือ</span></div>
+    <div class="social-group mt-12" id="si2-social"></div>
+  </div>
+
+  <div class="page-footer">
+    การคลิก "เข้าสู่ระบบ" ข้างต้น แสดงว่าคุณได้อ่านและเข้าใจ และยินยอมตาม
+    <a class="ds-link">นโยบายความเป็นส่วนตัว</a> และ <a class="ds-link">คุ้มครองข้อมูลส่วนบุคคล</a>
+  </div>
+</div>
+</div>
+
+<!-- ════════════════════════════════════════════════
+     2. PASSWORD — Normal
+════════════════════════════════════════════════ -->
+<div id="password" class="page">
+<div class="scene">
+  <div class="card">
+    <div class="card-hd">
+      <div class="logo-wrap" data-logo></div>
+      <h1 class="ds-h3">ยินดีต้อนรับสู่ Sellsuki</h1>
+      <p class="email-chip" id="pw-email-display">hello@sellsuki.com</p>
+      <a class="ds-link" onclick="nav('sign-in')">ไม่ใช่บัญชีนี้ใช่ไหม? ใช้อีเมลอื่นแทน</a>
+    </div>
+
+    <div class="ds-fields">
+      <div class="ds-field">
+        <label class="ds-label">รหัสผ่าน</label>
+        <div class="iw">
+          <!-- ✅ DSInput showPasswordToggle -->
+          <input class="ds-input has-toggle" type="password" id="pw-input"
+            placeholder="ระบุรหัสผ่าน"
+            oninput="checkLen('pw-input','btn-pw-login',1)"
+            onkeydown="if(event.key==='Enter')pwLogin()"/>
+          <button class="eye-btn" onclick="toggleEye('pw-input',this)" tabindex="-1">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+        <div class="forgot-row"><a class="ds-link" onclick="nav('forgot')">ลืมรหัสผ่าน?</a></div>
+      </div>
+    </div>
+
+    <div class="ds-actions mt-8">
+      <button class="ds-btn ds-btn-primary disabled" id="btn-pw-login" onclick="pwLogin()">เข้าสู่ระบบ</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ════════════════════════════════════════════════
+     2b. PASSWORD — Error State ✦ (Image 1)
+════════════════════════════════════════════════ -->
+<div id="password-error" class="page">
+<div class="scene">
+  <div class="card">
+    <div class="card-hd">
+      <div class="logo-wrap" data-logo></div>
+      <h1 class="ds-h3">ยินดีต้อนรับสู่ Sellsuki</h1>
+      <p class="email-chip">hello@sellsuki.com</p>
+      <a class="ds-link" onclick="nav('sign-in')">ไม่ใช่บัญชีนี้ใช่ไหม? ใช้อีเมลอื่นแทน</a>
+    </div>
+
+    <div class="ds-fields">
+      <div class="ds-field">
+        <label class="ds-label">รหัสผ่าน</label>
+        <div class="iw">
+          <!-- ✅ DSInput state="error" + showPasswordToggle -->
+          <input class="ds-input error" type="password" value="wrongpassword" readonly/>
+          <span class="input-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#e11d48" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+          </span>
+        </div>
+        <!-- ✅ DSInput errorMessage + forgot link side by side -->
+        <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:8px; margin-top:4px;">
+          <div class="ds-field-error" style="margin-top:0">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            รหัสผ่านไม่ถูกต้อง กรุณาลองอีกครั้ง
+          </div>
+          <a class="ds-link" onclick="nav('forgot')" style="white-space:nowrap">ลืมรหัสผ่าน?</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="ds-actions mt-8">
+      <!-- ✅ Disabled primary — SKY-200 muted blue -->
+      <button class="ds-btn ds-btn-primary disabled">เข้าสู่ระบบ</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ════════════════════════════════════════════════
+     3. SIGN-UP — Name
+════════════════════════════════════════════════ -->
+<div id="sign-up" class="page">
+<div class="scene">
+  <div class="card">
+    <div class="card-hd">
+      <div class="logo-wrap" data-logo></div>
+      <h1 class="ds-h3">สมัครสมาชิก Sellsuki</h1>
+      <p class="email-chip" id="su-email-display">new@example.com</p>
+      <a class="ds-link" onclick="nav('sign-in')">สมัครด้วยอีเมลอื่น</a>
+    </div>
+
+    <div class="ds-fields">
+      <div class="ds-field">
+        <label class="ds-label">ชื่อ <span class="req">*</span></label>
+        <input class="ds-input" type="text" id="su-first" placeholder="ระบุชื่อ" oninput="checkSuName()"/>
+      </div>
+      <div class="ds-field">
+        <label class="ds-label">นามสกุล <span class="req">*</span></label>
+        <input class="ds-input" type="text" id="su-last" placeholder="ระบุนามสกุล" oninput="checkSuName()"/>
+      </div>
+    </div>
+
+    <div class="ds-actions mt-16">
+      <button class="ds-btn ds-btn-primary disabled" id="btn-su-next" onclick="nav('set-password')">ต่อไป</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ════════════════════════════════════════════════
+     3b. SET-PASSWORD ✦ (Image 2) — Before verify email
+════════════════════════════════════════════════ -->
+<div id="set-password" class="page">
+<div class="scene">
+  <div class="card">
+    <div class="card-hd">
+      <div class="logo-wrap" data-logo></div>
+      <h1 class="ds-h3">สมัครสมาชิก Sellsuki</h1>
+      <p class="email-chip">new@example.com</p>
+      <a class="ds-link" onclick="nav('sign-in')">สมัครด้วยอีเมลอื่น</a>
+    </div>
+
+    <div class="ds-fields">
+      <!-- ✅ DSInput showPasswordToggle + inline validation -->
+      <div class="ds-field">
+        <label class="ds-label">ตั้งรหัสผ่าน <span class="req">*</span></label>
+        <div class="iw">
+          <input class="ds-input has-toggle" type="password" id="sp-pw"
+            placeholder="ระบุรหัสผ่าน" oninput="checkSetPw()"
+            onkeydown="if(event.key==='Enter')checkSetPwAndGo()"/>
+          <button class="eye-btn" onclick="toggleEye('sp-pw',this)" tabindex="-1">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+        <div class="ds-field-error" id="sp-pw-err" style="display:none">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          รหัสผ่านต้องมีอย่างน้อย 8 ตัวอักษร
+        </div>
+      </div>
+      <div class="ds-field">
+        <label class="ds-label">ยืนยันรหัสผ่าน <span class="req">*</span></label>
+        <div class="iw">
+          <input class="ds-input has-toggle" type="password" id="sp-pw2"
+            placeholder="ระบุรหัสผ่าน" oninput="checkSetPw()"
+            onkeydown="if(event.key==='Enter')checkSetPwAndGo()"/>
+          <button class="eye-btn" onclick="toggleEye('sp-pw2',this)" tabindex="-1">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+        <div class="ds-field-error" id="sp-pw2-err" style="display:none">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          รหัสผ่านไม่ตรงกัน
+        </div>
+      </div>
+    </div>
+
+    <div class="ds-actions mt-16">
+      <button class="ds-btn ds-btn-primary disabled" id="btn-sp-next" onclick="nav('verify-email')">ต่อไป</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ════════════════════════════════════════════════
+     4. VERIFY EMAIL — Countdown
+════════════════════════════════════════════════ -->
+<div id="verify-email" class="page">
+<div class="scene">
+  <div class="card">
+    <div class="verify-icon">
+      <svg viewBox="0 0 80 80" fill="none" width="80" height="80">
+        <rect width="80" height="80" rx="40" fill="#FEF3C7"/>
+        <rect x="14" y="24" width="52" height="38" rx="4" fill="#F59E0B"/>
+        <path d="M14 28L40 46L66 28" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <div class="card-hd" style="margin-bottom:20px">
+      <h1 class="ds-h3">กรุณายืนยันอีเมล</h1>
+      <p class="ds-body">ตรวจสอบอีเมลที่ถูกส่งไปที่</p>
+      <p style="font-size:15px;font-weight:600;color:var(--sky-600)">new@example.com</p>
+      <p class="ds-body">เพื่อยืนยันบัญชีของคุณและเริ่มต้นใช้งาน</p>
+    </div>
+    <div class="ds-actions">
+      <!-- ✅ Disabled with countdown -->
+      <button class="ds-btn ds-btn-primary disabled" id="btn-resend" onclick="resendOtp()">ส่งอีกครั้ง (60s)</button>
+    </div>
+    <p class="dev-hint" onclick="nav('email-confirmed')">[DEV: จำลองยืนยันอีเมลสำเร็จ →]</p>
+  </div>
+</div>
+</div>
+
+<!-- ════════════════════════════════════════════════
+     4b. EMAIL CONFIRMED ✦ (Image 3) — Success
+════════════════════════════════════════════════ -->
+<div id="email-confirmed" class="page">
+<div class="scene">
+  <div class="card tc">
+    <div style="display:flex;justify-content:center;margin-bottom:20px">
+      <div class="logo-wrap" data-logo></div>
+    </div>
+    <div class="card-hd" style="margin-bottom:24px">
+      <h1 class="ds-h3">ยินดีด้วย อีเมลของคุณได้รับ<br/>การยืนยันแล้ว</h1>
+      <p class="ds-body">
+        อีเมล <a class="ds-link" style="font-size:inherit;font-weight:600">new@example.com</a><br/>
+        ของคุณได้รับการยืนยันแล้ว
+      </p>
+    </div>
+    <div class="ds-actions">
+      <!-- ✅ Primary ACTIVE (not disabled) — เข้าสู่ระบบ -->
+      <button class="ds-btn ds-btn-primary" onclick="nav('profile')">เข้าสู่ระบบ</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ════════════════════════════════════════════════
+     5. FORGOT PASSWORD
+════════════════════════════════════════════════ -->
+<div id="forgot" class="page">
+<div class="scene">
+  <div class="card">
+    <button class="back-btn" onclick="nav('password')">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+    </button>
+    <div class="card-hd">
+      <div class="logo-wrap" data-logo></div>
+      <h1 class="ds-h3">ระบุอีเมลของคุณ</h1>
+      <p class="ds-body">โปรดป้อนอีเมลของคุณ<br/>เราจะส่งข้อมูลเพื่อรีเซ็ตรหัสผ่านให้</p>
+    </div>
+    <div class="ds-fields">
+      <div class="ds-field">
+        <label class="ds-label">อีเมล</label>
+        <input class="ds-input" type="email" id="fp-email" placeholder="ระบุอีเมล"
+          oninput="checkEmail('fp-email','btn-fp-send')"
+          onkeydown="if(event.key==='Enter')fpSend()"/>
+      </div>
+    </div>
+    <div class="ds-actions mt-16">
+      <button class="ds-btn ds-btn-primary disabled" id="btn-fp-send" onclick="fpSend()">รีเซ็ตรหัสผ่าน</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ════════════════════════════════════════════════
+     5b. FORGOT — Sent
+════════════════════════════════════════════════ -->
+<div id="forgot-sent" class="page">
+<div class="scene">
+  <div class="card tc">
+    <div class="verify-icon" style="margin-bottom:16px">
+      <svg viewBox="0 0 80 80" fill="none" width="80" height="80">
+        <rect width="80" height="80" rx="40" fill="#ECFDF5"/>
+        <path d="M22 40l12 12 24-28" stroke="#059669" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <div class="card-hd" style="margin-bottom:20px">
+      <h1 class="ds-h3">ส่งอีเมลแล้ว!</h1>
+      <p class="ds-body">ลิงก์รีเซ็ตรหัสผ่านถูกส่งไปยัง</p>
+      <p style="font-size:15px;font-weight:600;color:var(--sky-600)" id="fp-sent-email">hello@sellsuki.com</p>
+      <p class="ds-body">กรุณาตรวจสอบกล่องอีเมล</p>
+    </div>
+    <div class="ds-actions">
+      <button class="ds-btn ds-btn-primary" onclick="nav('sign-in')">กลับหน้าเข้าสู่ระบบ</button>
+    </div>
+    <p class="ds-caption mt-12">ไม่ได้รับอีเมล?&nbsp;<a class="ds-link" onclick="nav('forgot')">ส่งอีกครั้ง</a></p>
+  </div>
+</div>
+</div>
+
+<!-- ════════════════════════════════════════════════
+     6. SOCIAL CALLBACK — Confirm
+════════════════════════════════════════════════ -->
+<div id="social-cb" class="page">
+<div class="scene">
+  <div class="card">
+    <div class="card-hd">
+      <!-- ✅ DS Avatar xl -->
+      <div class="ds-avatar ds-avatar-xl" id="cb-avatar">ก</div>
+      <h1 class="ds-h3 mt-8" id="cb-name">ก้อง กัลยกร</h1>
+      <p class="ds-body" id="cb-prov">ผ่าน Google</p>
+    </div>
+    <p class="ds-body tc" id="cb-msg">
+      ต้องการเข้าสู่ระบบด้วยบัญชี <strong style="color:var(--text-primary)">Google</strong> นี้ใช่หรือไม่?
+    </p>
+    <div class="ds-actions mt-20">
+      <!-- ✅ 1 primary button rule -->
+      <button class="ds-btn ds-btn-primary" onclick="nav('profile')">ยืนยัน เข้าสู่ระบบ</button>
+      <button class="ds-btn ds-btn-outline" onclick="nav('sign-in')">ยกเลิก</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ════════════════════════════════════════════════
+     7. PROFILE — Logged in + Logout
+════════════════════════════════════════════════ -->
+<div id="profile" class="page">
+<div class="scene">
+  <div class="card">
+    <div class="gap-12 tc">
+      <div style="display:flex;justify-content:center">
+        <!-- DS Avatar xl -->
+        <div class="ds-avatar ds-avatar-xl">ส</div>
+      </div>
+      <div>
+        <p style="font-size:20px;font-weight:700;color:var(--text-primary)">สมชาย ใจดี</p>
+        <p style="font-size:14px;color:var(--text-secondary);margin-top:4px">hello@sellsuki.com</p>
+      </div>
+      <div class="gap-12" style="margin-top:8px">
+        <div class="info-tile">
+          <p class="info-tile-label">สมาชิกตั้งแต่</p>
+          <p class="info-tile-value">มีนาคม 2025</p>
+        </div>
+        <div class="info-tile">
+          <p class="info-tile-label">แผนการใช้งาน</p>
+          <p class="info-tile-value" style="color:var(--sky-600)">Sellsuki Pro</p>
+        </div>
+      </div>
+      <!-- ✅ DSButton variant="destructive" -->
+      <button class="ds-btn ds-btn-destructive" style="margin-top:8px"
+        onclick="document.getElementById('logout-modal').classList.add('open')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        ออกจากระบบ
+      </button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ════ DS ConfirmDialog — Logout ════ -->
+<div class="modal-overlay" id="logout-modal"
+  onclick="if(event.target===this)this.classList.remove('open')">
+  <div class="modal-box">
+    <div class="modal-icon">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--rose-600)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+    </div>
+    <p class="modal-title">ต้องการออกจากระบบ?</p>
+    <p class="modal-desc">คุณแน่ใจหรือไม่ว่าต้องการออกจากระบบ<br/>คุณจะต้องเข้าสู่ระบบใหม่อีกครั้ง</p>
+    <!-- ButtonGroup: outline + destructive -->
+    <div class="modal-actions">
+      <button class="ds-btn ds-btn-outline" onclick="document.getElementById('logout-modal').classList.remove('open')">ยกเลิก</button>
+      <button class="ds-btn ds-btn-destructive" onclick="document.getElementById('logout-modal').classList.remove('open');nav('sign-in')">ออกจากระบบ</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════ JavaScript ════ -->
+<script>
+/* ── State ── */
+const S = {
+  email: '',
+  accounts: {
+    'hello@sellsuki.com': { name:'สมชาย ใจดี'  },
+    'test@sellsuki.com' : { name:'ทดสอบ ระบบ'  },
+  }
+}
+
+/* ── Logo injection ── */
+function injectLogos() {
+  const tpl = document.getElementById('tpl-logo').content
+  document.querySelectorAll('[data-logo]').forEach(el => el.appendChild(tpl.cloneNode(true)))
+}
+
+/* ── Social buttons factory ── */
+const SOCIALS = [
+  { id:'Google',   label:'Google',
+    icon:`<svg class="si-icon" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>` },
+  { id:'Facebook', label:'Facebook',
+    icon:`<svg class="si-icon" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" fill="#1877F2"/></svg>` },
+  { id:'Line',     label:'Line',
+    icon:`<svg class="si-icon" viewBox="0 0 24 24"><rect width="24" height="24" rx="6" fill="#06C755"/><path d="M20 10.2C20 6.76 16.42 4 12 4S4 6.76 4 10.2c0 3.07 2.72 5.64 6.39 6.13.25.05.59.17.67.38.08.2.05.5.03.7l-.1.63c-.03.2-.16.78.68.42.84-.35 4.53-2.67 6.18-4.57C19.39 12.67 20 11.5 20 10.2z" fill="#fff"/></svg>` },
+]
+
+const SOCIAL_MOCK = {
+  Google:   { name:'ก้อง กัลยกร', initial:'ก' },
+  Facebook: { name:'ฝน มาลัย',   initial:'ฝ' },
+  Line:     { name:'ปอ สุดาพร',  initial:'ป' },
+}
+
+function buildSocialBtns(containerId, action) {
+  const el = document.getElementById(containerId)
+  if (!el) return
+  el.innerHTML = SOCIALS.map(s => `
+    <button class="ds-btn ds-btn-solid-light" onclick="${action}('${s.id}')">
+      ${s.icon} เข้าใช้งานด้วยบัญชี ${s.label}
+    </button>`).join('')
+}
+
+/* ── Router ── */
+const SHOW_BG = ['sign-in','sign-in-email-dup']
+
+function nav(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'))
+  const pg = document.getElementById(id)
+  if (pg) pg.classList.add('active')
+
+  // bg art
+  document.getElementById('bg-art').style.display = SHOW_BG.includes(id) ? '' : 'none'
+
+  // nav highlight
+  document.querySelectorAll('.demo-nav button').forEach(b => {
+    b.classList.toggle('on', b.getAttribute('onclick') === `nav('${id}')`)
+  })
+}
+
+/* ── Email validation & button enable ── */
+function isEmail(v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()) }
+
+function checkEmail(inId, btnId) {
+  const v = document.getElementById(inId).value
+  document.getElementById(btnId).classList.toggle('disabled', !isEmail(v))
+}
+
+function checkLen(inId, btnId, min) {
+  const v = document.getElementById(inId).value
+  document.getElementById(btnId).classList.toggle('disabled', v.length < min)
+}
+
+/* ── Sign-In email next ── */
+function siEmailNext() {
+  const email = document.getElementById('si-email').value.trim()
+  if (!isEmail(email)) return
+  S.email = email
+  if (S.accounts[email]) {
+    document.getElementById('pw-email-display').textContent = email
+    nav('password')
+  } else {
+    document.getElementById('su-email-display').textContent = email
+    nav('sign-up')
+  }
+}
+
+function goSignUp() {
+  const email = document.getElementById('si-email').value.trim()
+  if (!isEmail(email)) return
+  S.email = email
+  document.getElementById('su-email-display').textContent = email
+  nav('sign-up')
+}
+
+/* ── Password login ── */
+function pwLogin() {
+  nav('profile')
+}
+
+/* ── Sign-up name check ── */
+function checkSuName() {
+  const fn = document.getElementById('su-first').value.trim()
+  const ln = document.getElementById('su-last').value.trim()
+  document.getElementById('btn-su-next').classList.toggle('disabled', !(fn && ln))
+}
+
+/* ── Set-password validation ── */
+function checkSetPw() {
+  const pw  = document.getElementById('sp-pw').value
+  const pw2 = document.getElementById('sp-pw2').value
+
+  const pwErr  = document.getElementById('sp-pw-err')
+  const pw2Err = document.getElementById('sp-pw2-err')
+  const pwEl   = document.getElementById('sp-pw')
+  const pw2El  = document.getElementById('sp-pw2')
+
+  const pwShort = pw.length > 0 && pw.length < 8
+  pwErr.style.display = pwShort ? 'flex' : 'none'
+  pwEl.classList.toggle('error', pwShort)
+
+  const mismatch = pw2.length > 0 && pw !== pw2
+  pw2Err.style.display = mismatch ? 'flex' : 'none'
+  pw2El.classList.toggle('error', mismatch)
+
+  const valid = pw.length >= 8 && pw === pw2
+  document.getElementById('btn-sp-next').classList.toggle('disabled', !valid)
+}
+
+function checkSetPwAndGo() {
+  const pw  = document.getElementById('sp-pw').value
+  const pw2 = document.getElementById('sp-pw2').value
+  if (pw.length >= 8 && pw === pw2) nav('verify-email')
+}
+
+/* ── Resend countdown ── */
+let resendInterval = null
+function resendOtp() {
+  if (resendInterval) return
+  let s = 60
+  const btn = document.getElementById('btn-resend')
+  btn.classList.add('disabled')
+  resendInterval = setInterval(() => {
+    s--
+    btn.textContent = `ส่งอีกครั้ง (${s}s)`
+    if (s <= 0) {
+      clearInterval(resendInterval); resendInterval = null
+      btn.textContent = 'ส่งอีกครั้ง'; btn.classList.remove('disabled')
+    }
+  }, 1000)
+}
+
+/* ── Forgot PW send ── */
+function fpSend() {
+  const email = document.getElementById('fp-email').value.trim()
+  if (!isEmail(email)) return
+  document.getElementById('fp-sent-email').textContent = email
+  nav('forgot-sent')
+}
+
+/* ── Social login ── */
+function socialLogin(provider) {
+  const u = SOCIAL_MOCK[provider]
+  document.getElementById('cb-avatar').textContent = u.initial
+  document.getElementById('cb-name').textContent   = u.name
+  document.getElementById('cb-prov').textContent   = `ผ่าน ${provider}`
+  document.getElementById('cb-msg').innerHTML =
+    `ต้องการเข้าสู่ระบบด้วยบัญชี <strong style="color:var(--text-primary)">${provider}</strong> นี้ใช่หรือไม่?`
+  nav('social-cb')
+}
+
+/* ── Toggle eye (showPasswordToggle) ── */
+const EYE_ON  = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`
+const EYE_OFF = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>`
+function toggleEye(id, btn) {
+  const el = document.getElementById(id)
+  const show = el.type === 'password'
+  el.type = show ? 'text' : 'password'
+  btn.innerHTML = show ? EYE_OFF : EYE_ON
+}
+
+/* ── Init ── */
+document.addEventListener('DOMContentLoaded', () => {
+  injectLogos()
+  buildSocialBtns('si-social',  'socialLogin')
+  buildSocialBtns('si2-social', 'socialLogin')
+})
+</script>
+</body>
+</html>

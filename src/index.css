@@ -1,0 +1,234 @@
+/* ════════════════════════════════════════════════
+   Global styles — Sellsuki AMS
+   DS tokens are loaded from @uxuissk/design-system/styles.css
+   Only add project-specific overrides here
+════════════════════════════════════════════════ */
+
+/*
+  DS Font Rule:
+  - DB HeaventRounded  → headings, body, labels (loaded via @uxuissk/design-system/styles.css)
+  - Inter              → buttons only
+  - Noto Sans Thai     → web-safe fallback when DS package is not installed
+*/
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+Thai:wght@400;500;600;700&display=swap');
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  /* DS: DB HeaventRounded for all text (from DS package), Noto Sans Thai as web fallback */
+  font-family: 'DB HeaventRounded', 'Noto Sans Thai', sans-serif;
+  font-size: 16px;
+  color: #1f2937; /* text-primary = Gray-800 */
+  background: #f9fafb; /* bg-page = Gray-50 */
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Auth page background */
+.auth-bg {
+  min-height: 100vh;
+  background: #f9fafb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  padding: 24px 16px 80px;
+  overflow: hidden;
+}
+
+/* Background illustration layer */
+.auth-bg-art {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  pointer-events: none;
+  z-index: 0;
+}
+.auth-bg-art img {
+  width: clamp(180px, 26vw, 500px);
+  height: clamp(180px, 26vw, 500px);
+  object-fit: contain;
+  flex-shrink: 0;
+}
+@media (max-width: 640px) {
+  .auth-bg-art { display: none; }
+}
+
+/* Auth card container */
+.auth-container {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 440px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+/* Auth card */
+.auth-card {
+  width: 100%;
+  background: #ffffff;
+  border: 1px solid #e5e7eb; /* stroke-primary */
+  border-radius: 16px;       /* radius-xl */
+  box-shadow: 0px 1px 2px 0px rgba(0,0,0,.05); /* elevation-sm */
+  padding: clamp(24px, 5vw, 40px);
+}
+
+/* Card header */
+.auth-card-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 8px;
+  margin-bottom: 32px;
+}
+
+.auth-logo {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  margin-bottom: 4px;
+}
+
+.auth-title {
+  font-family: 'DB HeaventRounded', 'Noto Sans Thai', sans-serif;
+  font-size: clamp(20px, 4.5vw, 28px);
+  font-weight: 700;
+  color: #1f2937;
+  line-height: 1.25;
+}
+
+.auth-subtitle {
+  font-size: 16px;
+  color: #6b7280;
+  line-height: 1.5;
+}
+
+.auth-email-chip {
+  font-size: 14px;
+  color: #6b7280;
+  font-weight: 400;
+}
+
+/* Fields stack — DS form field gap = 16px */
+.auth-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+}
+
+/* Actions stack */
+.auth-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 8px;
+  width: 100%;
+}
+
+/* Social buttons group */
+.auth-social-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+/* Forgot password link — right aligned */
+.auth-forgot-link {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 4px;
+}
+
+/* Page footer */
+.auth-footer {
+  font-size: 12px;
+  color: #6b7280;
+  line-height: 1.7;
+  text-align: left;
+  width: 100%;
+}
+
+/* Verify icon */
+.verify-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 8px;
+}
+
+/* Back button */
+.auth-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #6b7280;
+  font-family: inherit;
+  font-size: 14px;
+  padding: 0;
+  margin-bottom: 16px;
+  transition: color 0.15s;
+  align-self: flex-start;
+}
+.auth-back-btn:hover { color: #1f2937; }
+
+/* Profile info tiles */
+.info-tile {
+  background: #f3f4f6; /* bg-secondary = Gray-100 */
+  border-radius: 8px;
+  padding: 12px 16px;
+  text-align: left;
+}
+.info-tile-label {
+  font-size: 12px;
+  color: #6b7280;
+  margin-bottom: 4px;
+}
+.info-tile-value {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+/* DS link */
+a.ds-link, .ds-link {
+  color: #1b8bf5; /* Link token = Sky-600 */
+  text-decoration: none;
+  cursor: pointer;
+  font-size: 14px;
+  transition: color 0.15s;
+}
+a.ds-link:hover, .ds-link:hover {
+  color: #1478dc;
+  text-decoration: underline;
+}
+
+/* Animation */
+@keyframes fadeSlideUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.auth-card {
+  animation: fadeSlideUp 0.22s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
